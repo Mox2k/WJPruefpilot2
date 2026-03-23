@@ -34,8 +34,7 @@ WJ-Icon.png
 docs/specs/
 
 # Claude Code
-.claude/
-skills-lock.json
+.claude/settings.local.json
 
 # Misc
 *.log
