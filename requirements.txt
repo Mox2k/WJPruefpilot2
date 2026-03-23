@@ -1,0 +1,8 @@
+xhtml2pdf
+matplotlib
+Pillow
+reportlab
+html5lib
+pypdf
+svglib
+numpy

@@ -1,0 +1,295 @@
+        <html><!-- DIN A4 21x29,7 cm -->
+            <head>
+            <style>
+                @page { size: a4 portrait;
+                    @frame header_frame {
+                        -pdf-frame-content: header_content_1;
+                        left: 1cm;
+                        right: 1cm;
+                        top: 1cm;
+                    }
+                    @frame content_frame {
+                        left: 1cm;
+                        right: 1cm;
+                        top: 1cm;
+                    }
+                    @frame footer_frame {
+                        -pdf-frame-content: footer_content;
+                        left: 2cm;
+                        right: 2cm;
+                        bottom: 0cm;
+                        height: 2cm;
+                    }
+                }
+
+                body { font-size: 12px; line-height: 1.2; }
+                h1 { font-size: 24px; margin-top: 0px; margin-bottom: 0px; }
+                h2 { font-size: 22px; margin-top: 0px; margin-bottom: 0px; }
+                h4 { margin-top: 0px; margin-bottom: 0px; }
+                p { font-size: 14px; }
+                bold { font-weight: bold; }
+                table { border-collapse: collapse; width: 100%; margin-bottom: 0px; font-size: 12px; }
+                th, td { border-collapse: collapse; border: 1px solid; padding: 3px; text-align: left; }
+                th { border-collapse: collapse; background-color: #f0f0f5; font-weight: bold; }
+                .logo { max-width: 100%; width: 180px; height: auto; }
+                .signature { max-height: 150px; width: 220px; height: auto; }
+                .border, .border { border-collapse: collapse; border: 1px solid black;}
+                .bordernull { border: 0;}
+                .haken { color: green; font-size: 14px; }
+                .kreuz { color: red; font-size: 14px; }
+
+            </style>
+            </head>
+            <body>
+
+                <!-- Header -->
+                <div id="header_content_1">
+                </div>
+
+                <!-- Content -->
+                <div id="content">
+
+                    <table class="border">
+                        <tr>
+                            <td style="border-right: 0;"><b>Erst- und Wiederholungsprüfung<br>
+                            ortsveränderlicher elektrischer Geräte<br>
+                            <small>Prüf- und Messprotokoll</small></b></td>
+                            <td style="border-left: 0; text-align: right;">
+                                <img src="data:image/png;base64,$logo_str"
+                                    alt="Logo" class="logo">
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table class="border">
+                        <tr>
+                            <td style="border-right:0; width: 20%;">Nr.</td>
+                            <td style="border-left:0; width: 30%;"><b>$calibration_number</b></td>
+                            <td style="border-right:0; width: 20%;">Kunden-Nr.</td>
+                            <td style="border-left:0; width: 30%;">$kundennummer</td>
+                        </tr>
+                    </table>
+
+                    <table class="border">
+                        <tr>
+                            <td style="width: 50%;">Auftraggeber:<br>
+                            <b>$kunde<br>
+                            $kunde_strasse<br>
+                            $kunde_plz $kunde_ort</b></td>
+                            <td style="width: 50%;">Auftragnehmer:<br>
+                            <b>$firma<br>
+                            $strasse<br>
+                            $plz $ort</b></td>
+                        </tr>
+                    </table>
+
+                    <table class="border">
+                        <tr>
+                            <td>Prüfung nach: $vde_text</td>
+                        </tr>
+                    </table>
+
+                    <table class="border">
+                        <tr class="bordernull">
+                            <td class="bordernull"><b>Gerätedaten</b></td>
+                        </tr>
+                        <tr class="bordernull">
+                            <td class="bordernull" style="width: 15%;">Herrsteller:</td>
+                            <td class="bordernull" style="width: 30%;">$hersteller</td>
+                            <td class="bordernull" style="width: 15%;">Nennspannung:</td>
+                            <td class="bordernull">$nennspannung V</td>
+                            <td class="bordernull" style="width: 20%;">co Phi: $cosphi</td>
+                        </tr>
+                        <tr class="bordernull">
+                            <td class="bordernull">Typ:</td>
+                            <td class="bordernull">$modell</td>
+                            <td class="bordernull">Nennstrom:</td>
+                            <td class="bordernull">$nennstrom A</td>
+                            <td class="bordernull" style="width: 20%;">Schutzklasse: $schutzklasse_roman</td>
+                        </tr>
+                        <tr class="bordernull">
+                            <td class="bordernull">Ser-Nr.:</td>
+                            <td class="bordernull">$sn</td>
+                            <td class="bordernull">Nennleistung:</td>
+                            <td class="bordernull">$nennleistung W</td>
+                            <td class="bordernull" style="width: 20%;"></td>
+                        </tr>
+                        <tr class="bordernull">
+                            <td class="bordernull">Inv.-Nr.:</td>
+                            <td class="bordernull">$inventarnummer</td>
+                            <td class="bordernull">Frequenz:</td>
+                            <td class="bordernull">$frequenz Hz</td>
+                            <td class="bordernull" style="width: 20%;"></td>
+                        </tr>
+                    </table>
+
+                    <table class="border">
+                        <tr class="bordernull">
+                            <th style="width: 23.333%; text-align: center;">Sichtprüfung</th>
+                            <th style="width: 10%; text-align: center;">i.O./n.i.O.</th>
+                            <th style="width: 23.333%; text-align: center;">Sichtprüfung</th>
+                            <th style="width: 10%; text-align: center;">i.O./n.i.O.</th>
+                            <th style="width: 23.333%; text-align: center;">Sichtprüfung</th>
+                            <th style="width: 10%; text-align: center;">i.O./n.i.O.</th>
+                        </tr>
+                        <tr class="bordernull">
+                            <td class="bordernull" style="border-right: 1; width: 23.333%;"><small>Typenschild/ Warnhinweis/ Kennzeichnungen</small></td>
+                            <td style="border-bottom: 0; width: 10%; text-align: center;"><span class="$typenschild_class">$typenschild</span></td>
+                            <td class="bordernull" style="width: 23.333%;"><small>Kühlluftöffnungen/ Luftfilter</small></td>
+                            <td style="border-bottom: 0; width: 10%; text-align: center;"><span class="$kuehlluft_class">$kuehlluft</span></td>
+                            <td class="bordernull" style="width: 23.333%;"><small>Anzeichen von Überlastung/ unsachgemäßem Gebrauch</small></td>
+                            <td style="border-bottom: 0; width: 10%; text-align: center;"><span class="$ueberlastung_class">$ueberlastung</span></td>
+                        </tr>
+                        <tr class="bordernull">
+                            <td class="bordernull" style="width: 23.333%;"><small>Gehäuse/Schutzabdeckungen</small></td>
+                            <td style="border-top: 0; border-bottom: 0; width: 10%; text-align: center;"><span class="$gehaeuse_class">$gehaeuse</span></td>
+                            <td class="bordernull" style="width: 23.333%;"><small>Schalter, Steuer, Einstell- und Sicherheitsvorrichtungen</small></td>
+                            <td style="border-top: 0; border-bottom: 0; width: 10%; text-align: center;"><span class="$schalter_class">$schalter</span></td>
+                            <td class="bordernull" style="width: 23.333%;"><small>Sicherheitsbeeinträchtigende
+                            Verschmutzung/Korrission/Alterung</small></td>
+                            <td style="border-top: 0; border-bottom: 0; width: 10%; text-align: center;"><span class="$verschmutzung_vis_class">$verschmutzung_vis</span></td>
+                        </tr>
+                        <tr class="bordernull">
+                            <td class="bordernull" style="width: 23.333%;"><small>Anschlussleitung/stecker, Anschlussklemmen und -adern</small></td>
+                            <td style="border-top: 0; border-bottom: 0; width: 10%; text-align: center;"><span class="$anschlussleitung_class">$anschlussleitung</span></td>
+                            <td class="bordernull" style="width: 23.333%;"><small>Bemessung der zugänglichen Gerätesicherung</small></td>
+                            <td style="border-top: 0; border-bottom: 0; width: 10%; text-align: center;"><span class="$bemessung_class">$bemessung</span></td>
+                            <td class="bordernull" style="width: 23.333%;"><small>Mechanische Gefährdung</small></td>
+                            <td style="border-top: 0; border-bottom: 0; width: 10%; text-align: center;"><span class="$mechanische_gefaehrdung_class">$mechanische_gefaehrdung</span></td>
+                        </tr>
+                        <tr class="bordernull">
+                            <td class="bordernull" style="width: 23.333%;"><small>Biegeschutz/ Zugentlastung</small></td>
+                            <td style="border-top: 0; border-bottom: 0; width: 10%; text-align: center;"><span class="$biegeschutz_class">$biegeschutz</span></td>
+                            <td class="bordernull" style="width: 23.333%;"><small>Beuteile und Baugruppen</small></td>
+                            <td style="border-top: 0; border-bottom: 0; width: 10%; text-align: center;"><span class="$bauteile_class">$bauteile</span></td>
+                            <td class="bordernull" style="width: 23.333%;"><small>Unzulässige Eingriffe und Änderungen</small></td>
+                            <td style="border-top: 0; border-bottom: 0; width: 10%; text-align: center;"><span class="$unzulaessige_eingriffe_class">$unzulaessige_eingriffe</span></td>
+                        </tr>
+                        <tr class="bordernull">
+                            <td class="bordernull" style="width: 23.333%;"><small>Leitungshalterungen, Sicherungshalter, usw.</small></td>
+                            <td style="border-top: 0;width: 10%; text-align: center;"><span class="$leitungshalterungen_class">$leitungshalterungen</span></td>
+                            <td class="bordernull" style="width: 23.333%;"></td>
+                            <td style="border-top: 0; width: 10%; text-align: center;"></td>
+                            <td class="bordernull" style="width: 23.333%;"></td>
+                            <td style="border-top: 0; width: 10%; text-align: center;"></td>
+                        </tr>
+                    </table>
+
+                    <table class="border">
+                        <tr>
+                            <th style="text-align: center;">Messungen</th>
+                            <th style="text-align: center;">Grenzwert</th>
+                            <th style="text-align: center;">Messwert</th>
+                            <th style="text-align: center;">i.O./n.i.O.</th>
+                            <th style="text-align: center;">Bemerkung</th>
+                        </tr>
+                        <tr>
+                            <td style="width: 20%; text-align: right;"><small>Schutzleiterwiderstand (RPE)</small></td>
+                            <td style="width: 20%; text-align: right;">$grenzwert_rpe</td>
+                            <td style="width: 20%; text-align: right;">$messgroesse_rpe</td>
+                            <td style="width: 10%; text-align: center;"><span class="$pruefergebnis_rpe_class">$pruefergebnis_rpe</span></td>
+                            <td style="width: 30%;">$rpe_bemerkungen</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 20%; text-align: right;"><small>Isolationswiderstand (RISO)</small></td>
+                            <td style="width: 20%; text-align: right;">$grenzwert_riso</td>
+                            <td style="width: 20%; text-align: right;">$messgroesse_riso</td>
+                            <td style="width: 10%;text-align: center;"><span class="$pruefergebnis_riso_class">$pruefergebnis_riso</span></td>
+                            <td style="width: 30%;">$riso_bemerkungen</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 20%; text-align: right;"><small>Schutzleiterstrom (IPE)</small></td>
+                            <td style="width: 20%; text-align: right;">$grenzwert_ipe</td>
+                            <td style="width: 20%; text-align: right;">$messgroesse_ipe</td>
+                            <td style="width: 10%;text-align: center;"><span class="$pruefergebnis_ipe_class">$pruefergebnis_ipe</span></td>
+                            <td style="width: 30%;">$ipe_bemerkungen</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 20%; text-align: right;"><small>Berührungsstrom (IB)</small></td>
+                            <td style="width: 20%; text-align: right;">$grenzwert_ib</td>
+                            <td style="width: 20%; text-align: right;">$messgroesse_ib</td>
+                            <td style="width: 10%; text-align: center;"><span class="$pruefergebnis_ib_class">$pruefergebnis_ib</span></td>
+                            <td style="width: 30%;">$ib_bemerkungen</td>
+                        </tr>
+                    </table>
+
+                    <table class="border">
+                        <tr class="bordernull">
+                            <th style="width: 20%;">Funktionsprüfung:</th>
+                            <th style="width: 20%; text-align: center;">i.O./n.i.O.</th>
+                            <td class="bordernull" style="border-bottom: 0; width: 60%;"></td>
+                        </tr>
+                        <tr class="bordernull">
+                            <td style="width: 20%;">Funktion des Gerätes</td>
+                            <td style="width: 20%; text-align: center;"><span class="$funktion_io_class">$funktion_io_symbol</span></td>
+                            <td class="bordernull" style="border-top: 0; width: 60%;"></td>
+                        </tr>
+                    </table>
+
+                    <table class="border">
+                        <tr>
+                            <td style="width: 25%;">Verwendetes Messgerät:</td>
+                            <td style="width: 75%;">$vde_messgeraet</td>
+                        </tr>
+                    </table>
+
+
+                    <table class="border">
+                        <tr>
+                            <td style="width: 50%; height: 2.5cm;">Mängel/Bemerkungen:<br>
+                            $bemerkungen
+                            </td>
+                            <td class="bordernull" style="width: 35%;">Das elektrische Gerät entspricht den anerkannten
+                            Regeln der Elektrotechnik. Ein sicherer Gebrauch bei
+                            bestimmungsgemäßer Anwendung ist gewährleistet
+                            </td>
+                            <td class="bordernull" style="text-align: center; vertical-align: middle; width: 15%"><span class="$gesamtergebnis_class">$gesamtergebnis_symbol</span></td>
+                        </tr>
+                    </table>
+
+                    <table class="border">
+                        <tr>
+                            <td class="bordernull" rowspan="2" style="vertical-align: bottom; width: 30%;">Nächster Prüftermin<br>$datum_in_einem_jahr
+                            </td>
+
+
+                            <td class="bordernull" style="width: 35%;">Prüfer/In: $pruefer_name</td>
+
+
+                            <td class="bordernull" style="width: 35%;"><img
+                                  src="data:image/png;base64,$unterschrift_str"
+                                  alt="Unterschrift" class="signature"></td>
+                        </tr>
+                        <tr>
+
+                            <td class="bordernull" style="width: 35%;">Datum: $pruefdatum</td>
+                            <td class="bordernull" style="width: 35%;">Unterschrift</td>
+                            <td class="bordernull" style="width: 30%;"></td>
+                        </tr>
+                    </table>
+
+
+
+                </div>
+
+                <!-- Footer -->
+                <div id="footer_content">
+                    <table>
+                        <tr>
+                            <td width="50%">
+                                <img src="data:image/png;base64,$logo_str"
+                                     alt="Logo" style="width:120px; height:auto;">
+                            </td>
+                            <td width="50%" style="text-align: right; font-size: 10px;">
+                                <h4>$firma,
+                                $strasse,
+                                $plz,
+                                $ort, $land<br>
+                                $telefon, $webseite</h4>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+            </body>
+        </html>

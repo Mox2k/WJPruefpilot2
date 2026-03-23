@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.spec
+
+# Virtual Environment
+venv/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Lokale Konfiguration & persoenliche Daten
+settings.ini
+data/
+
+# Persoenliche Dateien im Root (Unterschrift, Stempel, Logo)
+Dennis-Unterschrift.jpg
+WJ_Stempel.jpg
+Asset 1@4x-8.png
+WJ-Icon.png
+
+# PyInstaller
+*.exe
+
+# Claude Code (lokale Settings)
+.claude/settings.local.json
+
+# Misc
+*.log
+.DS_Store
+Thumbs.db
