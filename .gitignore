@@ -30,8 +30,12 @@ WJ-Icon.png
 # PyInstaller
 *.exe
 
-# Claude Code (lokale Settings)
-.claude/settings.local.json
+# Specs (intern/vertraulich)
+docs/specs/
+
+# Claude Code
+.claude/
+skills-lock.json
 
 # Misc
 *.log
