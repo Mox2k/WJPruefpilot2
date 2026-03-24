@@ -29,7 +29,7 @@ Business-Logik-Dateien (wichtig fuer Kontext):
 ## Aktueller Status
 
 Schritte 1-4 + 3.5 abgeschlossen.
-Schritt 3.5 braucht noch eine Feedback-Runde (Benutzer hat Korrekturen identifiziert).
+Schritt 3.5 Feedback-Runde + Style-Migration + Responsive Layouts erledigt.
 Schritt 5 (Feinschliff) offen.
 
 ### Was bereits funktioniert (Schritt 1-4 + 3.5)
@@ -45,8 +45,7 @@ Schritt 5 (Feinschliff) offen.
 - **UI-Zustandspersistenz:** Fensterposition/-groesse, Maximiert, Sidebar, aktive Seite, letzter Auftrag, Theme
 
 ### Was als naechstes ansteht
-- **Schritt 3.5** Feedback-Runde: Benutzer nennt Korrekturen/Anpassungen am VDE-Wizard, einzeln abarbeiten
-- **Schritt 5** Feinschliff (Ersteinrichtung, Info-Seite, PyInstaller, Edge Cases)
+- **Schritt 5** Feinschliff (Ersteinrichtung, Info-Seite, Animationen, Edge Cases)
 
 Frage den Benutzer welcher Schritt als naechstes bearbeitet werden soll.
 
@@ -55,7 +54,7 @@ Frage den Benutzer welcher Schritt als naechstes bearbeitet werden soll.
 - **Dynamische Zustaende** ueber Qt Properties loesen: `widget.setProperty("zustand", "aktiv")` + `unpolish()/polish()`. Die passenden Selektoren (`[zustand="aktiv"]` etc.) muessen in `styles.py` definiert sein.
 - **Farb-Dicts** (`FARBEN_DARK`/`FARBEN_LIGHT`) duerfen in UI-Dateien nur fuer Icons, QPainter, QColor importiert werden -- **nie fuer `setStyleSheet()`**.
 - **Neue Widgets** brauchen einen ObjectName und passende Styles in `styles.py`.
-- **ACHTUNG:** Aktuell gibt es noch ~40 inline `setStyleSheet()`-Aufrufe in den UI-Dateien (vor allem `detail_vde_seite.py`, `detail_temp_seite.py`, `overlay_dialog.py`). Diese muessen schrittweise nach `styles.py` migriert werden.
+- **Alle UI-Dateien sind vollstaendig migriert** (0 inline setStyleSheet in detail_vde_seite.py, detail_temp_seite.py und overlay_dialog.py).
 
 ### Wichtige technische Hinweise
 - **Python-Pfad:** `C:/Users/Locha/AppData/Local/Programs/Python/Python313/python.exe` (hat PySide6)

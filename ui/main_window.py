@@ -244,7 +244,7 @@ class MainWindow(QMainWindow):
         content_container.setObjectName("contentContainer")
         content_container.setAttribute(Qt.WA_StyledBackground, True)
         content_layout = QVBoxLayout(content_container)
-        content_layout.setContentsMargins(0, 0, 6, 6)
+        content_layout.setContentsMargins(0, 0, 10, 10)
         content_layout.setSpacing(0)
 
         # Content-Bereich mit Schatten

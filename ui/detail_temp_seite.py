@@ -139,12 +139,9 @@ class DetailTempSeite(QWidget):
 
         # X-Button zum Ausblenden
         self._infobox_close = QPushButton()
+        self._infobox_close.setObjectName("infoBoxClose")
         self._infobox_close.setFixedSize(22, 22)
         self._infobox_close.setCursor(Qt.PointingHandCursor)
-        self._infobox_close.setStyleSheet(
-            "QPushButton { background: transparent; border: none; border-radius: 4px; }"
-            "QPushButton:hover { background: rgba(128,128,128,40); }"
-        )
         self._infobox_close.clicked.connect(self._schliesse_infobox)
         infobox_layout.addWidget(self._infobox_close, alignment=Qt.AlignTop)
 
@@ -170,19 +167,7 @@ class DetailTempSeite(QWidget):
 
         self._infobox_close.setIcon(qta.icon("ri.close-line", color=icon_farbe))
 
-        bg_farbe = self._aktuelle_farben.get("basis", "#2c3245")
-        self._infobox.setStyleSheet(f"""
-            QWidget#infoBox {{
-                background-color: {bg_farbe};
-                border-radius: 8px;
-                border-left: 3px solid {info_farbe};
-            }}
-        """)
-        self._infobox_text.setStyleSheet(f"""
-            font-size: 12px;
-            color: {self._aktuelle_farben.get("text_sekundaer", "#8a8fa0")};
-            background: transparent;
-        """)
+        # Styles werden global ueber styles.py angewendet (ObjectNames infoBox/infoBoxText)
 
     # --- Formular ---
 
@@ -219,9 +204,10 @@ class DetailTempSeite(QWidget):
         datum_box.addWidget(self._form_label("Prüfdatum"))
 
         self._datum_input = self._erstelle_validiertes_feld(
-            "datum", breite=140, standard=date.today().strftime("%d.%m.%Y"),
+            "datum", standard=date.today().strftime("%d.%m.%Y"),
             validator=self._validiere_datum
         )
+        self._datum_input["input"].setMaximumWidth(130)
         datum_box.addWidget(self._datum_input["input"])
         datum_box.addWidget(self._datum_input["fehler"])
 
@@ -238,7 +224,7 @@ class DetailTempSeite(QWidget):
         ))
 
         umgebung_feld = self._erstelle_validiertes_feld(
-            "umgebung", breite=120, standard="22,0",
+            "umgebung", standard="22,0",
             validator=self._validiere_dezimal, einheit="°C"
         )
         self._umgebung = umgebung_feld["input"]
@@ -310,30 +296,23 @@ class DetailTempSeite(QWidget):
 
         self._content.addLayout(zwei_spalten)
 
-    def _erstelle_validiertes_feld(self, name, breite=140, standard="",
+    def _erstelle_validiertes_feld(self, name, standard="",
                                     validator=None, einheit=None):
         """Erstellt ein QLineEdit mit Fehlerlabel, Live-Validierung und optionaler Einheit."""
         eingabe = QLineEdit(standard)
         eingabe.setObjectName("formInput")
-        eingabe.setFixedWidth(breite)
         eingabe.setFixedHeight(36)
 
-        # Einheit als Suffix-Label im Input
+        # Einheit als Suffix-Label im Input (Styles via formEinheitInline + hat_einheit Property)
         if einheit:
             suffix = QLabel(einheit, eingabe)
             suffix.setObjectName("formEinheitInline")
-            suffix.setStyleSheet(
-                f"color: {self._aktuelle_farben.get('text_sekundaer', '#8a8fa0')}; "
-                f"font-size: 12px; background: transparent; padding-right: 8px;"
-            )
             suffix.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
             def _positioniere_suffix(event=None, e=eingabe, s=suffix):
                 s.setGeometry(0, 0, e.width(), e.height())
             eingabe.resizeEvent = _positioniere_suffix
             _positioniere_suffix()
-            eingabe.setStyleSheet(
-                eingabe.styleSheet() + f"padding-right: {len(einheit) * 8 + 12}px;"
-            )
+            eingabe.setProperty("hat_einheit", "true")
 
         fehler = QLabel("")
         fehler.setObjectName("formFehler")
@@ -362,7 +341,7 @@ class DetailTempSeite(QWidget):
         soll_box.setSpacing(4)
         soll_box.addWidget(self._form_label("Soll-Temperatur"))
         soll_feld = self._erstelle_validiertes_feld(
-            f"{prefix}_soll", breite=140, standard=soll_default,
+            f"{prefix}_soll", standard=soll_default,
             validator=self._validiere_dezimal, einheit="°C"
         )
         soll_box.addWidget(soll_feld["input"])
@@ -374,7 +353,7 @@ class DetailTempSeite(QWidget):
         ist_box.setSpacing(4)
         ist_box.addWidget(self._form_label("Ist-Temperatur"))
         ist_feld = self._erstelle_validiertes_feld(
-            f"{prefix}_ist", breite=140, standard=soll_default,
+            f"{prefix}_ist", standard=soll_default,
             validator=self._validiere_dezimal, einheit="°C"
         )
         ist_box.addWidget(ist_feld["input"])
@@ -526,9 +505,7 @@ class DetailTempSeite(QWidget):
         self._pdf_feedback.setCursor(Qt.PointingHandCursor)
         self._pdf_feedback.setToolTip("PDF öffnen")
         self._pdf_feedback.setFixedSize(40, 40)
-        self._pdf_feedback.setStyleSheet(
-            "QPushButton#pdfFeedbackBtn { background: transparent; border: none; }"
-        )
+        # Style via pdfFeedbackBtn ObjectName in styles.py
         zeile.addWidget(self._pdf_feedback)
 
         # PDF-erstellen-Button

@@ -160,7 +160,10 @@ def generiere_stylesheet(farben: dict) -> str:
 
     /* Content-Container (Margin um Content) */
     QWidget#contentContainer {{
-        background-color: {farben["basis"]};
+        background-color: qlineargradient(
+            x1:0, y1:0, x2:0, y2:1,
+            stop:0 {farben["basis"]}, stop:1 {farben["aktiv_bg"]}
+        );
         border-bottom-right-radius: 8px;
     }}
 
@@ -488,6 +491,143 @@ def generiere_stylesheet(farben: dict) -> str:
         selection-background-color: {farben["hover_bg"]};
         padding: 4px;
         font-size: 13px;
+    }}
+
+    /* Stepper (VDE-Wizard) */
+    QLabel#stepperPunkt {{
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 12px;
+    }}
+    QLabel#stepperPunkt[zustand="erreicht"] {{
+        background-color: {farben["akzent"]};
+        color: #ffffff;
+        border: none;
+    }}
+    QLabel#stepperPunkt[zustand="offen"] {{
+        background-color: {farben["basis"]};
+        color: {farben["text_sekundaer"]};
+        border: 1px solid {farben["border"]};
+    }}
+
+    QLabel#stepperLabel {{
+        font-size: 11px;
+    }}
+    QLabel#stepperLabel[zustand="aktiv"] {{
+        color: {farben["text_primaer"]};
+        font-weight: 600;
+    }}
+    QLabel#stepperLabel[zustand="erledigt"] {{
+        color: {farben["text_primaer"]};
+    }}
+    QLabel#stepperLabel[zustand="offen"] {{
+        color: {farben["text_sekundaer"]};
+    }}
+
+    QFrame#stepperLinie[zustand="erledigt"] {{
+        background-color: {farben["akzent"]};
+    }}
+    QFrame#stepperLinie[zustand="offen"] {{
+        background-color: {farben["border"]};
+    }}
+
+    /* VDE-Typ Buttons (701/702 Auswahl) */
+    QPushButton#vdeTypButton {{
+        background: transparent;
+        border: none;
+        font-size: 13px;
+        font-weight: 500;
+        text-align: left;
+        padding-left: 4px;
+    }}
+    QPushButton#vdeTypButton[vde_aktiv="true"] {{
+        color: {farben["text_primaer"]};
+    }}
+    QPushButton#vdeTypButton[vde_aktiv="false"] {{
+        color: {farben["text_sekundaer"]};
+    }}
+
+    /* Sichtpruefung/Funktionspruefung Toggles */
+    QPushButton#sichtpruefungToggle {{
+        background: transparent;
+        border: none;
+        text-align: left;
+        font-size: 13px;
+        padding-left: 2px;
+        color: {farben["text_primaer"]};
+    }}
+
+    /* Einheit-Suffix im Input */
+    QLabel#formEinheitInline {{
+        color: {farben["text_sekundaer"]};
+        font-size: 12px;
+        background: transparent;
+        padding-right: 8px;
+    }}
+
+    /* Input mit Einheit (breiteres Padding rechts) */
+    QLineEdit#formInput[hat_einheit="true"] {{
+        padding-right: 32px;
+    }}
+    QLineEdit#formInputFehler[hat_einheit="true"] {{
+        padding-right: 32px;
+    }}
+
+    /* Infobox */
+    QWidget#infoBox {{
+        background-color: {farben["basis"]};
+        border-radius: 8px;
+        border-left: 3px solid {farben["info"]};
+    }}
+
+    QLabel#infoBoxText {{
+        font-size: 12px;
+        color: {farben["text_sekundaer"]};
+        background: transparent;
+    }}
+
+    QPushButton#infoBoxClose {{
+        background: transparent;
+        border: none;
+        border-radius: 4px;
+    }}
+    QPushButton#infoBoxClose:hover {{
+        background: rgba(128, 128, 128, 40);
+    }}
+
+    /* PDF-Feedback-Button */
+    QPushButton#pdfFeedbackBtn {{
+        background: transparent;
+        border: none;
+    }}
+
+    /* Overlay-Dialog */
+    QWidget#overlayDialog {{
+        background: transparent;
+    }}
+
+    QWidget#dialogBox {{
+        background-color: {farben["basis_hell"]};
+        border-radius: 14px;
+    }}
+
+    QLabel#dialogTitel {{
+        font-family: "Plus Jakarta Sans";
+        font-size: 14px;
+        font-weight: 600;
+        color: {farben["text_primaer"]};
+        background: transparent;
+    }}
+
+    QLabel#dialogNachricht {{
+        font-size: 12px;
+        color: {farben["text_sekundaer"]};
+        background: transparent;
+        padding-left: 40px;
+    }}
+
+    QLabel#dialogIcon {{
+        background: transparent;
     }}
 
     /* Scrollbereiche transparent */

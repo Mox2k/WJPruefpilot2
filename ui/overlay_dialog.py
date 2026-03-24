@@ -56,7 +56,7 @@ class OverlayDialog(QWidget):
         """Baut das Overlay mit zentriertem Dialog-Kasten auf."""
         # Gesamtes Overlay (Dimm-Hintergrund)
         self.setAttribute(Qt.WA_StyledBackground, True)
-        self.setStyleSheet("background: transparent;")
+        self.setObjectName("overlayDialog")
 
         # Aeusseres Layout zum Zentrieren
         aussen = QVBoxLayout(self)
@@ -65,6 +65,7 @@ class OverlayDialog(QWidget):
 
         # Dialog-Box
         self._dialog_box = QWidget()
+        self._dialog_box.setObjectName("dialogBox")
         self._dialog_box.setFixedWidth(360)
         self._dialog_box.setMaximumHeight(240)
 
@@ -77,17 +78,20 @@ class OverlayDialog(QWidget):
         header.setSpacing(12)
 
         self._icon_label = QLabel()
+        self._icon_label.setObjectName("dialogIcon")
         self._icon_label.setFixedSize(28, 28)
         self._icon_label.setAlignment(Qt.AlignCenter)
         header.addWidget(self._icon_label)
 
         self._titel_label = QLabel()
+        self._titel_label.setObjectName("dialogTitel")
         self._titel_label.setWordWrap(True)
         header.addWidget(self._titel_label, 1)
         box_layout.addLayout(header)
 
         # Nachricht
         self._nachricht_label = QLabel()
+        self._nachricht_label.setObjectName("dialogNachricht")
         self._nachricht_label.setWordWrap(True)
         self._nachricht_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         box_layout.addWidget(self._nachricht_label)
@@ -181,64 +185,8 @@ class OverlayDialog(QWidget):
     # --- Interne Methoden ---
 
     def _wende_styles_an(self):
-        """Wendet die aktuellen Farben auf den Dialog an."""
-        if not self._farben:
-            return
-
-        f = self._farben
-        self._dialog_box.setStyleSheet(f"""
-            QWidget {{
-                background-color: {f.get("basis_hell", "#363d52")};
-                border-radius: 14px;
-            }}
-        """)
-        self._titel_label.setStyleSheet(f"""
-            font-family: "Plus Jakarta Sans";
-            font-size: 14px;
-            font-weight: 600;
-            color: {f.get("text_primaer", "#e0e0e0")};
-            background: transparent;
-        """)
-        self._nachricht_label.setStyleSheet(f"""
-            font-size: 12px;
-            color: {f.get("text_sekundaer", "#8a8fa0")};
-            background: transparent;
-            padding-left: 40px;
-        """)
-        self._icon_label.setStyleSheet("background: transparent;")
-
-        # Buttons explizit stylen (Dialog-Box-Stylesheet ueberschreibt sonst alles)
-        self._btn_ok.setStyleSheet(f"""
-            QPushButton {{
-                background-color: {f.get("akzent", "#ed1b24")};
-                color: #ffffff;
-                border: none;
-                border-radius: 6px;
-                padding: 8px 20px;
-                font-size: 13px;
-                font-weight: bold;
-            }}
-            QPushButton:hover {{
-                background-color: {f.get("akzent_hover", "#d41920")};
-            }}
-            QPushButton:pressed {{
-                background-color: {f.get("akzent_pressed", "#b8151c")};
-            }}
-        """)
-        self._btn_abbrechen.setStyleSheet(f"""
-            QPushButton {{
-                background-color: {f.get("basis", "#2c3245")};
-                color: {f.get("text_primaer", "#e0e0e0")};
-                border: 1px solid {f.get("border", "#3a4158")};
-                border-radius: 6px;
-                padding: 8px 20px;
-                font-size: 13px;
-                font-weight: bold;
-            }}
-            QPushButton:hover {{
-                background-color: {f.get("hover_bg", "#3a4158")};
-            }}
-        """)
+        """Styles werden global ueber styles.py angewendet (ObjectNames dialogBox/dialogTitel/etc.)."""
+        pass
 
     def _animiere_einblenden(self):
         """Fade-Animation beim Einblenden."""

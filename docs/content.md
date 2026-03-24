@@ -32,7 +32,7 @@
 
 ### Aktueller Status
 
-**Aktiver Schritt:** Schritt 3.5 Feedback-Runde (Korrekturen/Anpassungen nach erstem Test)
+**Aktiver Schritt:** Schritt 5 (Feinschliff)
 **Gesamtfortschritt:** 4.5 / 5 Schritte abgeschlossen
 
 ---
@@ -52,12 +52,16 @@
 | 4a | 2026-03-21 | Schritt 4 komplett: Settings-Overlay (settings_overlay.py) mit 6 Reitern (Allgemein/SimplyCal/Firma/Pruefer/Messgeraete/System), Tab-Navigation mit Icons+ActiveIndicator, Auto-Save (sofort bei Aenderung), Bilder nach data/-Ordner kopiert, Bild-Upload mit Thumbnail-Vorschau, Messgeraete +/- mit Name+Seriennummer, Pruefer-Kuerzel (optional, sonst auto), Standard-Temperaturen konfigurierbar, DB-Datei-Dropdown neben Auftrags-Dropdown in SimplyCal-Seite, Click-on-TitleBar schliesst Overlay (Bug-Fix), Settings zentriert im Fenster (wie Flow), Theme-Toggle bleibt in Title Bar (Sonne/Mond), settings.py erweitert (data/, theme, kuerzel, standard_temps, messgeraete_strukturiert, fenster_geometrie, sidebar_zustand, letzter_auftrag), Multi-Instanz-sicheres set_setting (INI vor Schreiben neu lesen), pdf_base_generator + pdf_temp/vde_generator Bildpfade data/-kompatibel + Pruefer-Kuerzel, UI-Zustandspersistenz (Fensterposition/-groesse, Maximiert, Sidebar, aktive Seite, letzter Auftrag, Theme) | Schritt 5: Feinschliff |
 | 5-design | 2026-03-21 | Design Guide erstellt (docs/design-guide.md), Design-Werte im Code angepasst: Spacing kompakter (Settings/Auftraege 16px, Detail 20px), Input-Hoehen einheitlich 36px, Dialog-Margins symmetrisch 32/24/32/24, Gruppen-Titel 14px, Logo-Text 16px, Font-Skala auf 6 Stufen reduziert, Infobox-Margins symmetrisch, Qt-Skills installiert (qt-styling/layouts/dialogs/architecture/debugging/model-view/packaging) | Schritt 5 oder 3.5 |
 | 3.5 | 2026-03-22 | Schritt 3.5 komplett: VDE-Wizard als 3-Seiten-Detail-Overlay (detail_vde_seite.py), Stepper-Navigation (3 klickbare Schritte mit Nummernkreisen+Linien), Seite 1 (VDE 701/702 RadioButtons mit Pruefungsart-Dropdown, Schutzklasse I/II/III, elektr. Daten vorausgefuellt, VDE-Messgeraet-Dropdown, Pruefdatum), Seite 2 (13 Sichtpruefungs-Toggles mdi6.toggle-switch gruen/rot, alle Standard bestanden), Seite 3 (RPE/RISO/IPE/IB dynamisch nach Schutzklasse ein-/ausgeblendet, Bemerkung pro Messwert, Funktionspruefung-Toggle, allgemeine Bemerkungen), Zurueck/Weiter/PDF-Buttons, Eingaben-Cache pro Waage (Session), Ueberschreib-Dialog bei existierendem PDF, PDF-Generierung im QThread mit Spinner, Kundennummer via auftraege_seite.get_aktuelle_kundennummer(), Live-Validierung, Theme-Support, Tabellen-Status-Update nach PDF-Erstellung | Schritt 5: Feinschliff |
+| 3.5b | 2026-03-24 | VDE-Feedback-Runde: Infobox-Bug gefixt (alle 3 wurden angezeigt statt nur aktive Seite), Infobox-Session-Flag (Schliessen bleibt erhalten wie bei Temp), VDE 702 + SK II als Standard, Tooltips fuer alle Felder auf Seite 1+3, Sichtpruefung/Funktionspruefung-Toggle visueller Cache-Restore-Bug gefixt, Messgeraet-Validierung bei PDF-Erstellung, Bounds-Pruefung in _zeige_seite, Messgeraet-Fehlermeldung verschwindet nach Hinzufuegen | Inline setStyleSheet nach styles.py migrieren (detail_vde_seite.py) |
+| 3.5c | 2026-03-24 | Inline setStyleSheet nach styles.py migriert (detail_vde_seite.py): Alle 12 setStyleSheet()-Aufrufe entfernt, neue ObjectNames (stepperPunkt/Label/Linie, vdeTypButton, sichtpruefungToggle, infoBoxClose), Property-Selektoren in styles.py (zustand, vde_aktiv, hat_einheit), Infobox/PDF-Feedback/Einheit-Suffix Styles zentral | Responsive Layouts |
+| 5a | 2026-03-24 | Responsive Layouts: Alle setFixedWidth() auf Input-Feldern entfernt (beide Detail-Seiten), breite-Parameter aus _erstelle_validiertes_feld entfernt, Sichtpruefung-Buttons SizePolicy.Ignored (lange Texte blockieren nicht QStackedWidget-Mindestbreite), Dropdown-MinimumWidths reduziert, Messwert/Bemerkung-Zeilen Stretch-Faktoren 1:2, elek_zeile ohne Stretch (gleichmaessige Verteilung), Pruefdatum maxWidth 130px + rechtsbuendig, Content-Container Margin 6->10px, Content-Container Gradient wie Sidebar | Schritt 5: Feinschliff |
+| 5b | 2026-03-24 | Inline setStyleSheet nach styles.py migriert (detail_temp_seite.py + overlay_dialog.py): 6+7 setStyleSheet()-Aufrufe entfernt, neue ObjectNames (overlayDialog, dialogBox, dialogTitel, dialogNachricht, dialogIcon), bestehende ObjectNames genutzt (infoBoxClose, infoBox, infoBoxText, formEinheitInline, pdfFeedbackBtn), hat_einheit Property statt inline padding, Dialog-Buttons nutzen globale primaryButton/secondaryButton Styles | Schritt 5: Feinschliff |
 
 ---
 
 ## Offene Punkte
 
-- VDE-Wizard (3.5) implementiert -- Benutzer hat beim ersten Test Korrekturen/Anpassungen identifiziert, Feedback-Runde ausstehend
+- **Schritt 5** Feinschliff: Ersteinrichtungs-Flow, Info-Seite, Animationen, Edge Cases
 
 ---
 
@@ -406,9 +410,11 @@ SVGs werden mit PySide6 direkt verwendet (QSvgWidget / QIcon).
 ### Schritt 5: Feinschliff
 - [ ] Ersteinrichtungs-Flow (bei fehlendem settings.ini)
 - [ ] Info-Seite
-- [ ] PyInstaller-Build anpassen (PySide6 hidden imports)
 - [ ] Animationen (Sidebar auf/zu, Seitenwechsel)
 - [ ] Edge Cases und Fehlermeldungen
+
+### Build & Auto-Update
+- Spec: [`docs/specs/build-und-auto-update.md`](specs/build-und-auto-update.md)
 
 ---
 

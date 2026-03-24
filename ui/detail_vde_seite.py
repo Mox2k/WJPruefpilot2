@@ -91,6 +91,7 @@ class DetailVDESeite(QWidget):
         self._checkboxes = {}  # Key -> QCheckBox (Sichtpruefung)
         self._messwert_widgets = {}  # key -> {"container": QWidget, ...}
         self._aktuelle_seite = 0
+        self._infobox_ausgeblendet = [False, False, False]  # Session-Flag pro Infobox
         self._erstelle_ui()
 
     def _erstelle_ui(self):
@@ -114,14 +115,16 @@ class DetailVDESeite(QWidget):
         self._infobox1 = self._erstelle_infobox(
             "Wählen Sie die VDE-Prüfungsart und geben Sie die elektrischen "
             "Grunddaten des Prüflings ein. Die Schutzklasse bestimmt, welche "
-            "Messwerte auf Seite 3 relevant sind."
+            "Messwerte auf Seite 3 relevant sind.",
+            0
         )
         fix_layout.addWidget(self._infobox1["widget"])
 
         self._infobox2 = self._erstelle_infobox(
             "Bewerten Sie jeden Prüfpunkt der Sichtprüfung. "
             "Grün = bestanden (i.O.), rot = nicht bestanden (n.i.O.). "
-            "Alle Punkte sind standardmäßig auf bestanden gesetzt."
+            "Alle Punkte sind standardmäßig auf bestanden gesetzt.",
+            1
         )
         fix_layout.addWidget(self._infobox2["widget"])
         self._infobox2["widget"].setVisible(False)
@@ -129,7 +132,8 @@ class DetailVDESeite(QWidget):
         self._infobox3 = self._erstelle_infobox(
             "Geben Sie die Messwerte Ihres VDE-Prüfgeräts ein. "
             "Je nach Schutzklasse sind unterschiedliche Messungen relevant. "
-            "Das Prüfergebnis wird automatisch anhand der Grenzwerte ermittelt."
+            "Das Prüfergebnis wird automatisch anhand der Grenzwerte ermittelt.",
+            2
         )
         fix_layout.addWidget(self._infobox3["widget"])
         self._infobox3["widget"].setVisible(False)
@@ -192,7 +196,8 @@ class DetailVDESeite(QWidget):
 
         for i, text in enumerate(schritte):
             if i > 0:
-                linie = QWidget()
+                linie = QFrame()
+                linie.setObjectName("stepperLinie")
                 linie.setFixedHeight(1)
                 linie.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
                 stepper_layout.addWidget(linie, alignment=Qt.AlignVCenter)
@@ -207,13 +212,14 @@ class DetailVDESeite(QWidget):
             schritt_layout.setAlignment(Qt.AlignCenter)
 
             punkt = QLabel(str(i + 1))
+            punkt.setObjectName("stepperPunkt")
             punkt.setFixedSize(24, 24)
             punkt.setAlignment(Qt.AlignCenter)
             schritt_layout.addWidget(punkt)
             self._stepper_punkte.append(punkt)
 
             label = QLabel(text)
-            label.setObjectName("formLabel")
+            label.setObjectName("stepperLabel")
             schritt_layout.addWidget(label)
             self._stepper_labels.append(label)
 
@@ -224,47 +230,31 @@ class DetailVDESeite(QWidget):
 
     def _aktualisiere_stepper(self):
         """Aktualisiert Stepper-Farben basierend auf aktuellem Schritt und Theme."""
-        akzent = self._aktuelle_farben.get("akzent", "#ed1b24")
-        text_p = self._aktuelle_farben.get("text_primaer", "#e0e0e0")
-        text_s = self._aktuelle_farben.get("text_sekundaer", "#8a8fa0")
-        basis = self._aktuelle_farben.get("basis", "#2c3245")
-        border = self._aktuelle_farben.get("border", "#3a4158")
-
         for i, punkt in enumerate(self._stepper_punkte):
-            if i == self._aktuelle_seite:
-                punkt.setStyleSheet(f"""
-                    background-color: {akzent};
-                    color: #ffffff;
-                    border-radius: 12px;
-                    font-size: 11px;
-                    font-weight: 600;
-                """)
-                self._stepper_labels[i].setStyleSheet(f"color: {text_p}; font-size: 11px; font-weight: 600;")
-            elif i < self._aktuelle_seite:
-                punkt.setStyleSheet(f"""
-                    background-color: {akzent};
-                    color: #ffffff;
-                    border-radius: 12px;
-                    font-size: 11px;
-                    font-weight: 600;
-                """)
-                self._stepper_labels[i].setStyleSheet(f"color: {text_p}; font-size: 11px;")
+            if i <= self._aktuelle_seite:
+                punkt.setProperty("zustand", "erreicht")
             else:
-                punkt.setStyleSheet(f"""
-                    background-color: {basis};
-                    color: {text_s};
-                    border: 1px solid {border};
-                    border-radius: 12px;
-                    font-size: 11px;
-                    font-weight: 600;
-                """)
-                self._stepper_labels[i].setStyleSheet(f"color: {text_s}; font-size: 11px;")
+                punkt.setProperty("zustand", "offen")
+            punkt.style().unpolish(punkt)
+            punkt.style().polish(punkt)
+
+            label = self._stepper_labels[i]
+            if i == self._aktuelle_seite:
+                label.setProperty("zustand", "aktiv")
+            elif i < self._aktuelle_seite:
+                label.setProperty("zustand", "erledigt")
+            else:
+                label.setProperty("zustand", "offen")
+            label.style().unpolish(label)
+            label.style().polish(label)
 
         for i, linie in enumerate(self._stepper_linien):
             if i < self._aktuelle_seite:
-                linie.setStyleSheet(f"background-color: {akzent};")
+                linie.setProperty("zustand", "erledigt")
             else:
-                linie.setStyleSheet(f"background-color: {border};")
+                linie.setProperty("zustand", "offen")
+            linie.style().unpolish(linie)
+            linie.style().polish(linie)
 
     # --- Wizard-Seiten ---
 
@@ -281,13 +271,14 @@ class DetailVDESeite(QWidget):
 
     def _zeige_seite(self, index):
         """Wechselt zur angegebenen Wizard-Seite."""
+        index = max(0, min(index, 2))
         self._aktuelle_seite = index
         self._seiten_stack.setCurrentIndex(index)
         self._aktualisiere_stepper()
         self._aktualisiere_navigation()
-        # Infoboxen umschalten
+        # Infoboxen umschalten (Session-Flag beruecksichtigen)
         for i, ib in enumerate([self._infobox1, self._infobox2, self._infobox3]):
-            ib["widget"].setVisible(i == index)
+            ib["widget"].setVisible(i == index and not self._infobox_ausgeblendet[i])
 
     # --- Seite 1: Grundeinstellungen ---
 
@@ -314,11 +305,11 @@ class DetailVDESeite(QWidget):
         mg_box.setSpacing(4)
         mg_box.addWidget(self._form_label(
             "VDE-Messgerät",
-            tooltip="VDE-Messgerät aus den Einstellungen"
+            tooltip="Prüfgerät für die elektrische Sicherheitsprüfung, konfigurierbar in den Einstellungen"
         ))
         self._messgeraet_dropdown = QComboBox()
         self._messgeraet_dropdown.setObjectName("formDropdown")
-        self._messgeraet_dropdown.setMinimumWidth(280)
+        self._messgeraet_dropdown.setMinimumWidth(120)
         self._messgeraet_dropdown.setFixedHeight(36)
         self._lade_messgeraete()
         mg_box.addWidget(self._messgeraet_dropdown)
@@ -331,16 +322,19 @@ class DetailVDESeite(QWidget):
 
         datum_box = QVBoxLayout()
         datum_box.setSpacing(4)
-        datum_box.addWidget(self._form_label("Prüfdatum"))
+        datum_box.addWidget(self._form_label(
+            "Prüfdatum",
+            tooltip="Datum der Durchführung der VDE-Prüfung (TT.MM.JJJJ)"
+        ))
         self._datum_input = self._erstelle_validiertes_feld(
-            "datum", breite=130, standard=date.today().strftime("%d.%m.%Y"),
+            "datum", standard=date.today().strftime("%d.%m.%Y"),
             validator=self._validiere_datum
         )
+        self._datum_input["input"].setMaximumWidth(130)
         datum_box.addWidget(self._datum_input["input"])
         datum_box.addWidget(self._datum_input["fehler"])
-        mg_datum_zeile.addLayout(datum_box)
-
         mg_datum_zeile.addStretch()
+        mg_datum_zeile.addLayout(datum_box)
         layout.addLayout(mg_datum_zeile)
 
         layout.addWidget(self._erstelle_trennlinie())
@@ -359,28 +353,31 @@ class DetailVDESeite(QWidget):
         vde701_zeile = QHBoxLayout()
         vde701_zeile.setSpacing(10)
         self._rb_701 = QPushButton("  VDE 701")
+        self._rb_701.setObjectName("vdeTypButton")
         self._rb_701.setCursor(Qt.PointingHandCursor)
         self._rb_701.setFixedHeight(36)
-        self._rb_701.setProperty("vde_aktiv", True)
+        self._rb_701.setProperty("vde_aktiv", False)
         self._rb_701.clicked.connect(lambda: self._waehle_vde_typ(0))
         vde701_zeile.addWidget(self._rb_701)
 
         self._pruefungsart_dropdown = QComboBox()
         self._pruefungsart_dropdown.setObjectName("formDropdown")
         self._pruefungsart_dropdown.setFixedHeight(36)
-        self._pruefungsart_dropdown.setMinimumWidth(180)
+        self._pruefungsart_dropdown.setMinimumWidth(100)
         self._pruefungsart_dropdown.addItems(["Neugerät", "Erweiterung", "Instandsetzung"])
+        self._pruefungsart_dropdown.setEnabled(False)
         vde701_zeile.addWidget(self._pruefungsart_dropdown)
         vde_box.addLayout(vde701_zeile)
 
         self._rb_702 = QPushButton("  VDE 702 — Wiederholungsprüfung")
+        self._rb_702.setObjectName("vdeTypButton")
         self._rb_702.setCursor(Qt.PointingHandCursor)
         self._rb_702.setFixedHeight(36)
-        self._rb_702.setProperty("vde_aktiv", False)
+        self._rb_702.setProperty("vde_aktiv", True)
         self._rb_702.clicked.connect(lambda: self._waehle_vde_typ(1))
         vde_box.addWidget(self._rb_702)
 
-        self._vde_typ_aktiv = 0  # 0 = 701, 1 = 702
+        self._vde_typ_aktiv = 1  # 0 = 701, 1 = 702
         obere_zeile.addLayout(vde_box)
 
         # Schutzklasse (rechts daneben)
@@ -393,8 +390,9 @@ class DetailVDESeite(QWidget):
         self._sk_dropdown = QComboBox()
         self._sk_dropdown.setObjectName("formDropdown")
         self._sk_dropdown.setFixedHeight(36)
-        self._sk_dropdown.setFixedWidth(80)
+        self._sk_dropdown.setMinimumWidth(60)
         self._sk_dropdown.addItems(["I", "II", "III"])
+        self._sk_dropdown.setCurrentIndex(1)  # SK II = Standard fuer elektronische Waagen
         self._sk_dropdown.currentIndexChanged.connect(self._schutzklasse_geaendert)
         sk_box.addWidget(self._sk_dropdown)
         sk_box.addStretch()
@@ -413,12 +411,26 @@ class DetailVDESeite(QWidget):
         elek_zeile = QHBoxLayout()
         elek_zeile.setSpacing(16)
 
-        elek_zeile.addLayout(self._feld_mit_einheit("Nennspannung", "nennspannung", "230", "V"))
-        elek_zeile.addLayout(self._feld_mit_einheit("Nennstrom", "nennstrom", "", "A"))
-        elek_zeile.addLayout(self._feld_mit_einheit("Nennleistung", "nennleistung", "", "W"))
-        elek_zeile.addLayout(self._feld_mit_einheit("Frequenz", "frequenz", "50", "Hz"))
-        elek_zeile.addLayout(self._feld_mit_einheit("cos φ", "cosphi", "1", ""))
-        elek_zeile.addStretch()
+        elek_zeile.addLayout(self._feld_mit_einheit(
+            "Nennspannung", "nennspannung", "230", "V",
+            tooltip="Betriebsspannung lt. Typenschild (Standard: 230 V)"
+        ))
+        elek_zeile.addLayout(self._feld_mit_einheit(
+            "Nennstrom", "nennstrom", "", "A",
+            tooltip="Maximale Stromaufnahme lt. Typenschild"
+        ))
+        elek_zeile.addLayout(self._feld_mit_einheit(
+            "Nennleistung", "nennleistung", "", "W",
+            tooltip="Leistungsaufnahme lt. Typenschild"
+        ))
+        elek_zeile.addLayout(self._feld_mit_einheit(
+            "Frequenz", "frequenz", "50", "Hz",
+            tooltip="Netzfrequenz (Standard: 50 Hz)"
+        ))
+        elek_zeile.addLayout(self._feld_mit_einheit(
+            "cos φ", "cosphi", "1", "",
+            tooltip="Leistungsfaktor (1 = rein ohmsche Last)"
+        ))
         layout.addLayout(elek_zeile)
 
         layout.addStretch()
@@ -433,35 +445,20 @@ class DetailVDESeite(QWidget):
         self._aktualisiere_vde_typ_styles()
 
     def _aktualisiere_vde_typ_styles(self):
-        """Aktualisiert VDE-Typ-Button-Styles."""
+        """Aktualisiert VDE-Typ-Button-Icons und Styles."""
         akzent = self._aktuelle_farben.get("akzent", "#ed1b24")
-        basis = self._aktuelle_farben.get("basis", "#2c3245")
-        border = self._aktuelle_farben.get("border", "#3a4158")
-        text_p = self._aktuelle_farben.get("text_primaer", "#e0e0e0")
         text_s = self._aktuelle_farben.get("text_sekundaer", "#8a8fa0")
 
         for btn, aktiv in [(self._rb_701, self._vde_typ_aktiv == 0),
                            (self._rb_702, self._vde_typ_aktiv == 1)]:
             if aktiv:
                 icon = qta.icon("ri.radio-button-fill", color=akzent)
-                btn.setStyleSheet(f"""
-                    QPushButton {{
-                        background: transparent; border: none;
-                        color: {text_p}; font-size: 13px; font-weight: 500;
-                        text-align: left; padding-left: 4px;
-                    }}
-                """)
             else:
                 icon = qta.icon("ri.radio-button-line", color=text_s)
-                btn.setStyleSheet(f"""
-                    QPushButton {{
-                        background: transparent; border: none;
-                        color: {text_s}; font-size: 13px; font-weight: 500;
-                        text-align: left; padding-left: 4px;
-                    }}
-                """)
             btn.setIcon(icon)
             btn.setIconSize(QSize(20, 20))
+            btn.style().unpolish(btn)
+            btn.style().polish(btn)
 
     def _schutzklasse_geaendert(self, index):
         """Aktualisiert sichtbare Messwertfelder basierend auf Schutzklasse."""
@@ -497,14 +494,12 @@ class DetailVDESeite(QWidget):
             zeile_nr = i // 2
 
             btn = QPushButton(f"  {punkt}")
+            btn.setObjectName("sichtpruefungToggle")
             btn.setCursor(Qt.PointingHandCursor)
             btn.setFixedHeight(34)
+            btn.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
             btn.setProperty("bestanden", True)
             btn.clicked.connect(lambda _, b=btn: self._toggle_sichtpruefung(b))
-            btn.setStyleSheet(
-                "QPushButton { background: transparent; border: none; "
-                "text-align: left; font-size: 12px; padding-left: 2px; }"
-            )
             self._checkboxes[punkt] = btn
             grid.addWidget(btn, zeile_nr, spalte)
 
@@ -528,11 +523,6 @@ class DetailVDESeite(QWidget):
             farbe = self._aktuelle_farben.get("fehler", "#f44336")
             btn.setIcon(qta.icon("ri.close-circle-line", color=farbe))
         btn.setIconSize(QSize(22, 22))
-        text_farbe = self._aktuelle_farben.get("text_primaer", "#e0e0e0")
-        btn.setStyleSheet(
-            f"QPushButton {{ background: transparent; border: none; "
-            f"text-align: left; font-size: 13px; padding-left: 2px; color: {text_farbe}; }}"
-        )
 
     def _aktualisiere_alle_sichtpruefung_icons(self):
         """Aktualisiert alle Sichtpruefungs-Icons (z.B. bei Theme-Wechsel)."""
@@ -565,6 +555,13 @@ class DetailVDESeite(QWidget):
         mess_titel.setObjectName("formGruppenTitel")
         links.addWidget(mess_titel)
 
+        messwert_tooltips = {
+            "rpe": "Widerstand des Schutzleiters — Grenzwert: ≤ 0,3 Ω (SK I)",
+            "riso": "Widerstand der Isolierung — Grenzwert: ≥ 1 MΩ (SK I/II), ≥ 0,25 MΩ (SK III)",
+            "ipe": "Ableitstrom über den Schutzleiter — Grenzwert: ≤ 3,5 mA (SK I)",
+            "ib": "Differenzstrom zwischen Hin- und Rückleiter — Grenzwert: ≤ 0,5 mA (SK II)",
+        }
+
         for key, (label, einheit) in MESSWERT_LABELS.items():
             container = QWidget()
             container.setObjectName("detailScrollInhalt")
@@ -572,25 +569,23 @@ class DetailVDESeite(QWidget):
             c_layout.setContentsMargins(0, 0, 0, 0)
             c_layout.setSpacing(4)
 
-            c_layout.addWidget(self._form_label(label))
+            c_layout.addWidget(self._form_label(label, tooltip=messwert_tooltips.get(key)))
             feld = self._erstelle_validiertes_feld(
-                f"mw_{key}", breite=140, standard="",
+                f"mw_{key}", standard="",
                 validator=self._validiere_dezimal_optional,
                 einheit=einheit if einheit else None
             )
             mess_zeile = QHBoxLayout()
             mess_zeile.setSpacing(8)
-            mess_zeile.addWidget(feld["input"])
+            mess_zeile.addWidget(feld["input"], 1)
 
             # Bemerkung direkt neben Messwert
             bem_input = QLineEdit()
             bem_input.setObjectName("formInput")
             bem_input.setFixedHeight(36)
-            bem_input.setMinimumWidth(160)
             bem_input.setPlaceholderText("Bemerkung...")
-            mess_zeile.addWidget(bem_input)
+            mess_zeile.addWidget(bem_input, 2)
 
-            mess_zeile.addStretch()
             c_layout.addLayout(mess_zeile)
             c_layout.addWidget(feld["fehler"])
 
@@ -610,9 +605,11 @@ class DetailVDESeite(QWidget):
 
         funk_titel = QLabel("Funktionsprüfung")
         funk_titel.setObjectName("formGruppenTitel")
+        funk_titel.setToolTip("Prüfung der grundlegenden Gerätefunktion nach VDE-Messung")
         rechts.addWidget(funk_titel)
 
         self._funktion_toggle = QPushButton("  Funktion des Gerätes i.O.")
+        self._funktion_toggle.setObjectName("sichtpruefungToggle")
         self._funktion_toggle.setCursor(Qt.PointingHandCursor)
         self._funktion_toggle.setFixedHeight(34)
         self._funktion_toggle.setProperty("bestanden", True)
@@ -671,9 +668,6 @@ class DetailVDESeite(QWidget):
         self._pdf_feedback.setCursor(Qt.PointingHandCursor)
         self._pdf_feedback.setToolTip("PDF öffnen")
         self._pdf_feedback.setFixedSize(40, 40)
-        self._pdf_feedback.setStyleSheet(
-            "QPushButton#pdfFeedbackBtn { background: transparent; border: none; }"
-        )
         zeile.addWidget(self._pdf_feedback)
 
         # Zurueck-Button
@@ -720,32 +714,25 @@ class DetailVDESeite(QWidget):
 
     # --- Validierung ---
 
-    def _erstelle_validiertes_feld(self, name, breite=140, standard="",
+    def _erstelle_validiertes_feld(self, name, standard="",
                                     validator=None, einheit=None):
         """Erstellt ein QLineEdit mit Fehlerlabel, Live-Validierung und optionaler Einheit."""
         eingabe = QLineEdit(standard)
         eingabe.setObjectName("formInput")
-        eingabe.setFixedWidth(breite)
         eingabe.setFixedHeight(36)
 
         # Einheit als Suffix-Label im Input
         if einheit:
             suffix = QLabel(einheit, eingabe)
             suffix.setObjectName("formEinheitInline")
-            suffix.setStyleSheet(
-                f"color: {self._aktuelle_farben.get('text_sekundaer', '#8a8fa0')}; "
-                f"font-size: 12px; background: transparent; padding-right: 8px;"
-            )
             suffix.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
             # Rechts im Input positionieren
             def _positioniere_suffix(event=None, e=eingabe, s=suffix):
                 s.setGeometry(0, 0, e.width(), e.height())
             eingabe.resizeEvent = _positioniere_suffix
             _positioniere_suffix()
-            # Padding rechts fuer den Suffix-Text
-            eingabe.setStyleSheet(
-                eingabe.styleSheet() + f"padding-right: {len(einheit) * 8 + 12}px;"
-            )
+            # Padding rechts via Property (Selektor in styles.py)
+            eingabe.setProperty("hat_einheit", True)
 
         fehler = QLabel("")
         fehler.setObjectName("formFehler")
@@ -910,6 +897,7 @@ class DetailVDESeite(QWidget):
         for key, bestanden in daten.get("sichtpruefung", {}).items():
             if key in self._checkboxes:
                 self._checkboxes[key].setProperty("bestanden", bestanden)
+                self._aktualisiere_sichtpruefung_icon(self._checkboxes[key])
 
         # Messwerte
         for key, mw_daten in daten.get("messwerte", {}).items():
@@ -919,6 +907,7 @@ class DetailVDESeite(QWidget):
 
         # Funktionspruefung
         self._funktion_toggle.setProperty("bestanden", daten.get("funktion_io", True))
+        self._aktualisiere_toggle_style(self._funktion_toggle)
 
         # Bemerkungen
         self._bemerkungen.setPlainText(daten.get("bemerkungen", ""))
@@ -965,14 +954,14 @@ class DetailVDESeite(QWidget):
         zeile.addStretch()
         return container
 
-    def _feld_mit_einheit(self, label_text, name, standard, einheit):
+    def _feld_mit_einheit(self, label_text, name, standard, einheit, tooltip=None):
         """Erstellt ein Eingabefeld mit Label und Einheit im Input als VBox."""
         box = QVBoxLayout()
         box.setSpacing(4)
-        box.addWidget(self._form_label(label_text))
+        box.addWidget(self._form_label(label_text, tooltip=tooltip))
 
         feld = self._erstelle_validiertes_feld(
-            name, breite=120, standard=standard,
+            name, standard=standard,
             validator=self._validiere_dezimal_optional,
             einheit=einheit if einheit else None
         )
@@ -980,7 +969,7 @@ class DetailVDESeite(QWidget):
         box.addWidget(feld["fehler"])
         return box
 
-    def _erstelle_infobox(self, text):
+    def _erstelle_infobox(self, text, index):
         """Erstellt eine Infobox mit X-Button zum Ausblenden."""
         widget = QWidget()
         widget.setObjectName("infoBox")
@@ -999,13 +988,10 @@ class DetailVDESeite(QWidget):
         layout.addWidget(text_label, 1)
 
         close_btn = QPushButton()
+        close_btn.setObjectName("infoBoxClose")
         close_btn.setFixedSize(22, 22)
         close_btn.setCursor(Qt.PointingHandCursor)
-        close_btn.setStyleSheet(
-            "QPushButton { background: transparent; border: none; border-radius: 4px; }"
-            "QPushButton:hover { background: rgba(128,128,128,40); }"
-        )
-        close_btn.clicked.connect(lambda: widget.setVisible(False))
+        close_btn.clicked.connect(lambda checked=False, idx=index: self._schliesse_infobox(idx))
         layout.addWidget(close_btn, alignment=Qt.AlignTop)
 
         return {
@@ -1015,28 +1001,20 @@ class DetailVDESeite(QWidget):
             "close": close_btn,
         }
 
+    def _schliesse_infobox(self, index):
+        """Blendet die Infobox fuer die Session aus."""
+        self._infobox_ausgeblendet[index] = True
+        [self._infobox1, self._infobox2, self._infobox3][index]["widget"].setVisible(False)
+
     def _aktualisiere_infobox(self, infobox):
-        """Aktualisiert Icons und Styling einer Infobox."""
+        """Aktualisiert Icons einer Infobox (Styling ueber styles.py)."""
         info_farbe = self._aktuelle_farben.get("info", "#42a5f5")
         icon_farbe = self._aktuelle_farben.get("text_sekundaer", "#8a8fa0")
-        bg_farbe = self._aktuelle_farben.get("basis", "#2c3245")
 
         infobox["icon"].setPixmap(
             qta.icon("ri.information-line", color=info_farbe).pixmap(18, 18)
         )
         infobox["close"].setIcon(qta.icon("ri.close-line", color=icon_farbe))
-        infobox["widget"].setStyleSheet(f"""
-            QWidget#infoBox {{
-                background-color: {bg_farbe};
-                border-radius: 8px;
-                border-left: 3px solid {info_farbe};
-            }}
-        """)
-        infobox["text"].setStyleSheet(f"""
-            font-size: 12px;
-            color: {self._aktuelle_farben.get("text_sekundaer", "#8a8fa0")};
-            background: transparent;
-        """)
 
     def _lade_messgeraete(self):
         """Laedt VDE-Messgeraete aus den Settings."""
@@ -1053,6 +1031,11 @@ class DetailVDESeite(QWidget):
             self._messgeraet_dropdown.addItem("— Kein Messgerät —")
             self._messgeraet_fehler.setText("Kein VDE-Messgerät in den Einstellungen gefunden")
             self._messgeraet_fehler.setVisible(True)
+        else:
+            if hasattr(self, "_messgeraet_fehler"):
+                self._messgeraet_fehler.setVisible(False)
+            if hasattr(self, "_fehler_label"):
+                self._verstecke_fehler()
 
     def _parse_dezimal(self, text):
         """Konvertiert Text mit Komma oder Punkt zu float."""
@@ -1170,9 +1153,9 @@ class DetailVDESeite(QWidget):
 
         if not self._lade_eingaben(wj_nummer):
             # Standardwerte setzen
-            self._waehle_vde_typ(0)
+            self._waehle_vde_typ(1)  # VDE 702 als Standard
             self._pruefungsart_dropdown.setCurrentIndex(0)
-            self._sk_dropdown.setCurrentIndex(0)
+            self._sk_dropdown.setCurrentIndex(1)  # SK II als Standard
             self._validierte_felder["nennspannung"]["input"].setText(
                 self._settings.get_standard_nennspannung())
             self._validierte_felder["nennstrom"]["input"].setText("")
@@ -1235,9 +1218,13 @@ class DetailVDESeite(QWidget):
             (self._infobox2, "vde_sichtpruefung"),
             (self._infobox3, "vde_messwerte"),
         ]
-        for ib, key in infobox_keys:
+        for i, (ib, key) in enumerate(infobox_keys):
             self._aktualisiere_infobox(ib)
-            ib["widget"].setVisible(self._settings.get_infobox_anzeigen(key))
+            # Nur die Infobox der aktiven Seite anzeigen (und nur wenn nicht geschlossen)
+            if not self._infobox_ausgeblendet[i]:
+                ib["widget"].setVisible(
+                    i == self._aktuelle_seite and self._settings.get_infobox_anzeigen(key)
+                )
 
     def aktualisiere_theme(self, farben):
         """Aktualisiert Farben bei Theme-Wechsel."""
@@ -1265,6 +1252,10 @@ class DetailVDESeite(QWidget):
         self._verstecke_fehler()
 
         # Validierung
+        if not self._messgeraet_dropdown.currentText().strip():
+            self._zeige_fehler("Kein VDE-Messgerät ausgewählt — bitte in den Einstellungen konfigurieren")
+            return
+
         if not self._validiere_alle_sichtbar():
             self._zeige_fehler("Bitte ungültige Felder korrigieren")
             return
