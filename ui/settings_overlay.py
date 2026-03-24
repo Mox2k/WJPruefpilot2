@@ -102,7 +102,7 @@ class SettingsOverlay(QWidget):
             ("ri.settings-line", "Allgemein"),
             ("ri.database-2-line", "SimplyCal"),
             ("ri.building-2-line", "Firma"),
-            ("ri.user-line", "Prüfer"),
+            ("ri.user-settings-line", "Prüfer"),
             ("ri.thermometer-line", "Messgeräte"),
             ("ri.function-line", "System"),
         ]

@@ -99,7 +99,44 @@ class DetailVDESeite(QWidget):
         haupt_layout.setContentsMargins(0, 0, 0, 0)
         haupt_layout.setSpacing(0)
 
-        # Scrollbereich
+        # Fixierter Bereich oben (Header + Stepper)
+        fix_oben = QWidget()
+        fix_oben.setObjectName("detailScrollInhalt")
+        fix_layout = QVBoxLayout(fix_oben)
+        fix_layout.setContentsMargins(32, 20, 32, 0)
+        fix_layout.setSpacing(12)
+        self._content = fix_layout  # temporaer fuer Header/Stepper
+
+        self._erstelle_header()
+        self._erstelle_stepper()
+
+        # Infoboxen (fixiert, wechseln mit Seite)
+        self._infobox1 = self._erstelle_infobox(
+            "Wählen Sie die VDE-Prüfungsart und geben Sie die elektrischen "
+            "Grunddaten des Prüflings ein. Die Schutzklasse bestimmt, welche "
+            "Messwerte auf Seite 3 relevant sind."
+        )
+        fix_layout.addWidget(self._infobox1["widget"])
+
+        self._infobox2 = self._erstelle_infobox(
+            "Bewerten Sie jeden Prüfpunkt der Sichtprüfung. "
+            "Grün = bestanden (i.O.), rot = nicht bestanden (n.i.O.). "
+            "Alle Punkte sind standardmäßig auf bestanden gesetzt."
+        )
+        fix_layout.addWidget(self._infobox2["widget"])
+        self._infobox2["widget"].setVisible(False)
+
+        self._infobox3 = self._erstelle_infobox(
+            "Geben Sie die Messwerte Ihres VDE-Prüfgeräts ein. "
+            "Je nach Schutzklasse sind unterschiedliche Messungen relevant. "
+            "Das Prüfergebnis wird automatisch anhand der Grenzwerte ermittelt."
+        )
+        fix_layout.addWidget(self._infobox3["widget"])
+        self._infobox3["widget"].setVisible(False)
+
+        haupt_layout.addWidget(fix_oben)
+
+        # Scrollbereich (nur Wizard-Seiten)
         scroll = QScrollArea()
         scroll.setObjectName("detailScroll")
         scroll.setWidgetResizable(True)
@@ -109,11 +146,9 @@ class DetailVDESeite(QWidget):
         scroll_inhalt = QWidget()
         scroll_inhalt.setObjectName("detailScrollInhalt")
         self._content = QVBoxLayout(scroll_inhalt)
-        self._content.setContentsMargins(32, 20, 32, 16)
+        self._content.setContentsMargins(32, 8, 32, 16)
         self._content.setSpacing(12)
 
-        self._erstelle_header()
-        self._erstelle_stepper()
         self._erstelle_seiten()
         self._content.addStretch()
 
@@ -144,6 +179,7 @@ class DetailVDESeite(QWidget):
         """Erstellt eine dezente Stepper-Navigation mit 3 klickbaren Schritten."""
         self._stepper_widget = QWidget()
         self._stepper_widget.setObjectName("detailScrollInhalt")
+        self._stepper_widget.setFixedHeight(40)
         stepper_layout = QHBoxLayout(self._stepper_widget)
         stepper_layout.setContentsMargins(0, 0, 0, 0)
         stepper_layout.setSpacing(0)
@@ -249,6 +285,9 @@ class DetailVDESeite(QWidget):
         self._seiten_stack.setCurrentIndex(index)
         self._aktualisiere_stepper()
         self._aktualisiere_navigation()
+        # Infoboxen umschalten
+        for i, ib in enumerate([self._infobox1, self._infobox2, self._infobox3]):
+            ib["widget"].setVisible(i == index)
 
     # --- Seite 1: Grundeinstellungen ---
 
@@ -266,14 +305,6 @@ class DetailVDESeite(QWidget):
         layout = QVBoxLayout(seite)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(10)
-
-        # Infobox
-        self._infobox1 = self._erstelle_infobox(
-            "Wählen Sie die VDE-Prüfungsart und geben Sie die elektrischen "
-            "Grunddaten des Prüflings ein. Die Schutzklasse bestimmt, welche "
-            "Messwerte auf Seite 3 relevant sind."
-        )
-        layout.addWidget(self._infobox1["widget"])
 
         # --- Messgerät + Prüfdatum ---
         mg_datum_zeile = QHBoxLayout()
@@ -450,14 +481,6 @@ class DetailVDESeite(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(8)
 
-        # Infobox
-        self._infobox2 = self._erstelle_infobox(
-            "Bewerten Sie jeden Prüfpunkt der Sichtprüfung. "
-            "Grün = bestanden (i.O.), rot = nicht bestanden (n.i.O.). "
-            "Alle Punkte sind standardmäßig auf bestanden gesetzt."
-        )
-        layout.addWidget(self._infobox2["widget"])
-
         gruppe_titel = QLabel("Sichtprüfung")
         gruppe_titel.setObjectName("formGruppenTitel")
         layout.addWidget(gruppe_titel)
@@ -529,14 +552,6 @@ class DetailVDESeite(QWidget):
         layout = QVBoxLayout(seite)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(10)
-
-        # Infobox
-        self._infobox3 = self._erstelle_infobox(
-            "Geben Sie die Messwerte Ihres VDE-Prüfgeräts ein. "
-            "Je nach Schutzklasse sind unterschiedliche Messungen relevant. "
-            "Das Prüfergebnis wird automatisch anhand der Grenzwerte ermittelt."
-        )
-        layout.addWidget(self._infobox3["widget"])
 
         # Zweispaltiges Layout: Messwerte links, Bemerkungen+Funktion rechts
         zwei_spalten = QHBoxLayout()
@@ -612,6 +627,8 @@ class DetailVDESeite(QWidget):
         self._bemerkungen = QTextEdit()
         self._bemerkungen.setObjectName("formTextArea")
         self._bemerkungen.setMaximumHeight(120)
+        self._bemerkungen.setLineWrapMode(QTextEdit.WidgetWidth)
+        self._bemerkungen.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self._bemerkungen.setPlaceholderText("Optionale Bemerkungen zum Protokoll...")
         rechts.addWidget(self._bemerkungen)
 
@@ -686,7 +703,7 @@ class DetailVDESeite(QWidget):
         self._pdf_btn = QPushButton("  PDF erstellen")
         self._pdf_btn.setObjectName("primaryButton")
         self._pdf_btn.setIcon(qta.icon("ri.printer-line", color="#ffffff"))
-        self._pdf_btn.setIconSize(QSize(18, 18))
+        self._pdf_btn.setIconSize(QSize(22, 22))
         self._pdf_btn.setCursor(Qt.PointingHandCursor)
         self._pdf_btn.setFixedHeight(42)
         self._pdf_btn.setMinimumWidth(160)
@@ -1074,10 +1091,16 @@ class DetailVDESeite(QWidget):
     # --- Spinner ---
 
     def _starte_spinner(self):
-        """Zeigt einen Spinner auf dem PDF-Button."""
+        """Zeigt einen Spinner neben dem PDF-Button waehrend der Generierung."""
         self._pdf_btn.setEnabled(False)
-        self._pdf_btn.setText("")
         self._spinner_winkel = 0
+
+        # Spinner im Feedback-Bereich anzeigen
+        akzent = self._aktuelle_farben.get("akzent", "#ed1b24")
+        self._pdf_feedback.setIcon(qta.icon("ri.loader-5-line", color=akzent))
+        self._pdf_feedback.setIconSize(QSize(24, 24))
+        self._pdf_feedback.setVisible(True)
+        self._pdf_feedback.setToolTip("")
 
         self._spinner_timer = QTimer(self)
         self._spinner_timer.setInterval(50)
@@ -1087,9 +1110,9 @@ class DetailVDESeite(QWidget):
     def _spinner_tick(self):
         """Aktualisiert den Spinner."""
         self._spinner_winkel = (self._spinner_winkel + 30) % 360
-        # Rotierendes Loader-Icon
-        self._pdf_btn.setIcon(qta.icon("ri.loader-4-line", color="#ffffff",
-                                        rotated=self._spinner_winkel))
+        akzent = self._aktuelle_farben.get("akzent", "#ed1b24")
+        self._pdf_feedback.setIcon(qta.icon("ri.loader-5-line", color=akzent,
+                                             rotated=self._spinner_winkel))
 
     def _stoppe_spinner(self):
         """Stellt den PDF-Button wieder her."""
@@ -1097,8 +1120,8 @@ class DetailVDESeite(QWidget):
             self._spinner_timer.stop()
             self._spinner_timer = None
         self._pdf_btn.setEnabled(True)
-        self._pdf_btn.setText("  PDF erstellen")
-        self._pdf_btn.setIcon(qta.icon("ri.printer-line", color="#ffffff"))
+        self._pdf_feedback.setVisible(False)
+        self._pdf_feedback.setToolTip("PDF öffnen")
 
     # --- Oeffentliche Methoden ---
 
@@ -1387,7 +1410,7 @@ class DetailVDESeite(QWidget):
         """Zeigt gruenes Feedback-Icon (klickbar zum Oeffnen)."""
         erfolg_farbe = self._aktuelle_farben.get("erfolg", "#4caf50")
         self._pdf_feedback.setIcon(
-            qta.icon("ri.file-check-line", color=erfolg_farbe)
+            qta.icon("ri.file-text-line", color=erfolg_farbe)
         )
         self._pdf_feedback.setIconSize(QSize(24, 24))
         self._pdf_feedback.setVisible(True)

@@ -106,6 +106,13 @@ assets/
 - **Dependencies:** Via pip installieren, requirements.txt pflegen.
 - **Kein Git-Repo aktuell** -- bei Aenderungen vorsichtig sein, kein Rollback moeglich.
 
+### Aenderungsumfang (VERBINDLICH)
+- **Nur das aendern, was explizit angefragt wurde.** Keine unaufgeforderten
+  Aenderungen an unbeteiligtem Code, Styles, Konfigurationen oder Komponenten.
+- Ausnahme: Direkt zusammenhaengende Stellen, die durch die Aenderung zwingend
+  angepasst werden muessen (z.B. ein umbenannter Parameter in allen Aufrufstellen).
+- Im Zweifel vorher fragen, statt eigenmaeachtig "Verbesserungen" mitzunehmen.
+
 ### Style-Regeln (VERBINDLICH)
 1. **Alle Styles gehoeren in `ui/styles.py`** -- kein `setStyleSheet()` in UI-Dateien.
 2. **Dynamische Zustaende** ueber Qt Properties + `[eigenschaft="wert"]`-Selektoren
