@@ -172,11 +172,65 @@
 - [x] Theme Dark/Light (persistent via Title Bar Toggle)
 
 ### Schritt 5: Feinschliff
-- [ ] Ersteinrichtungs-Flow (bei fehlendem settings.ini)
 - [ ] Info-Seite
 - [ ] Animationen (Sidebar auf/zu, Seitenwechsel)
 - [ ] Edge Cases und Fehlermeldungen
 
-### Build & Auto-Update
-- Spec: [`docs/specs/build-und-auto-update.md`](specs/build-und-auto-update.md)
+### Schritt 6: Build-Pipeline & Auto-Update
+
+> **Spec:** [`docs/specs/build-und-auto-update.md`](specs/build-und-auto-update.md)
+> Enthaelt alle technischen Details, Code-Beispiele, Batch-Script und Fehlerbehandlung.
+> Jeder Unterabschnitt unten verweist auf den zugehoerigen Spec-Abschnitt —
+> dort stehen die Implementierungsdetails.
+
+#### 6.1 Versionierung — Spec §1
+- [ ] `version.py` im Projekt-Root (`__version__ = "2.0.0"`)
+- [ ] Import in `main.py`, Info-Seite, Updater, PyInstaller
+
+#### 6.2 Benutzerdaten nach %APPDATA% — Spec §2
+- [ ] `settings.py` auf `%APPDATA%\WJPruefpilot\` umstellen (nur wenn `sys.frozen`)
+- [ ] `data/`-Ordner (Bilder) ebenfalls nach AppData
+- [ ] Erststart-Defaults (Protokollpfad, Theme, Temperaturen, VDE-Werte)
+- [ ] Rueckwaertsmigration: alte `settings.ini` neben `.exe` einmalig kopieren
+
+#### 6.3 Pfad-Referenzen anpassen — Spec §2 (Betroffene Stellen)
+- [ ] `main.py` — Settings-Pfad
+- [ ] `pdf_base_generator.py` — Bildpfade (bereits ueber Settings)
+- [ ] `ui/settings_overlay.py` — Bild-Upload nach AppData/data/
+
+#### 6.4 App-Icon — Spec §3
+- [ ] `assets/icons/Asset 10.svg` → `wjpruefpilot.ico` (multi-size)
+- [ ] PyInstaller-Konfiguration (`--icon=`)
+
+#### 6.5 GitHub Actions Build — Spec §4
+- [ ] `.github/workflows/build.yml` erstellen
+- [ ] Trigger auf Tag-Push (`v*`), Build-Step mit `shell: cmd`
+- [ ] PyInstaller-Build auf `windows-latest`
+- [ ] Automatisches GitHub Release mit `.exe` als Asset
+
+#### 6.6 Auto-Updater — Spec §5
+- [ ] `updater.py` — GitHub API Check im Hintergrund-Thread
+- [ ] Versionsvergleich (tag_name vs. lokale `__version__`)
+- [ ] Download mit Fortschrittsbalken (abbrechbar) + Dateigroessen-Check
+- [ ] Self-Replace via Batch-Helper (`.exe.bak`-Sicherung, Retry-Logik)
+
+#### 6.7 Update-Dialog — Spec §5 (Update-Dialog / Fortschritts-Anzeige)
+- [ ] "Neue Version verfuegbar"-Dialog (OverlayDialog)
+- [ ] Fortschrittsanzeige waehrend Download
+- [ ] "Spaeter" / "Jetzt updaten" / "Abbrechen"
+- [ ] Stilles Ignorieren bei Offline/Fehler
+
+#### 6.8 Settings-Integration & Info-Seite — Spec §1 + §5 (Konfiguration)
+- [ ] Toggle "Automatisch nach Updates suchen" im System-Tab
+- [ ] Info-Seite: `VERSION`-Konstante entfernen, `from version import __version__` verwenden
+
+#### 6.9 Manueller Testlauf (Update-Simulation) — Spec §7
+- [ ] Lokaler PyInstaller-Build mit v2.0.0, Settings-Migration pruefen
+- [ ] Test-Release v2.0.1-test auf GitHub (via Tag-Push)
+- [ ] Update-Dialog, Download, Fortschritt, Batch-Replace durchspielen
+- [ ] Fehlerfaelle: Offline, Abbrechen, Toggle deaktiviert
+- [ ] Test-Tag und Pre-Release aufraeumen
+
+#### 6.10 Erstes Release
+- [ ] Tag `v2.0.0` setzen und pushen
 
