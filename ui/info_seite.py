@@ -7,8 +7,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 
-
-VERSION = "1.0.0"
+from version import __version__
 
 
 class InfoSeite(QWidget):
@@ -44,7 +43,7 @@ class InfoSeite(QWidget):
         inhalt_layout.setSpacing(12)
 
         # App-Name + Version
-        app_label = QLabel(f"WJPruefpilot  v{VERSION}")
+        app_label = QLabel(f"WJPruefpilot  v{__version__}")
         app_label.setObjectName("detailSeitenTitel")
         inhalt_layout.addWidget(app_label)
 

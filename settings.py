@@ -1,19 +1,65 @@
 import configparser
 import os
+import sys
 
 
 class Settings:
-    """Klasse zum Lesen und Schreiben von Einstellungen aus einer INI-Datei."""
+    """Klasse zum Lesen und Schreiben von Einstellungen aus einer INI-Datei.
+
+    Im gepackten Modus (sys.frozen) werden Settings und Bilder in
+    %APPDATA%/WJPruefpilot/ gespeichert. In der Entwicklung bleibt
+    alles im Projektordner.
+    """
 
     def __init__(self, config_file='settings.ini'):
-        self.config_file = config_file
+        self._config_dir = self._ermittle_config_verzeichnis()
+        os.makedirs(self._config_dir, exist_ok=True)
+        self.config_file = os.path.join(self._config_dir, config_file)
+
         self.config = configparser.ConfigParser()
         self.data = {}
+
+        erst_start = not os.path.exists(self.config_file)
+
         try:
             self.config.read(self.config_file)
         except configparser.Error:
-            pass  # Wenn die Datei nicht vorhanden ist oder fehlerhaft ist, weitermachen
+            pass
+
+        if erst_start:
+            self._setze_erststart_defaults()
+
         self.load_settings()
+
+    @staticmethod
+    def _ermittle_config_verzeichnis():
+        """Gibt das Verzeichnis fuer settings.ini und data/ zurueck."""
+        if getattr(sys, 'frozen', False):
+            return os.path.join(os.environ['APPDATA'], 'WJPruefpilot')
+        return os.path.dirname(os.path.abspath(__file__))
+
+    def _setze_erststart_defaults(self):
+        """Schreibt sinnvolle Standardwerte beim allerersten Start."""
+        # Protokollpfad: Ordner neben der .exe (frozen) oder neben dem Projekt (dev)
+        if getattr(sys, 'frozen', False):
+            protokoll_pfad = os.path.join(
+                os.path.dirname(sys.executable), 'Protokolle'
+            )
+        else:
+            protokoll_pfad = os.path.join(os.getcwd(), 'Protokolle')
+        self.set_setting('PATH', 'protokolle', protokoll_pfad)
+
+        self.set_setting('ALLGEMEIN', 'theme', 'dark')
+
+        # Standard-Temperaturen
+        self.set_setting('SYSTEM', 'soll_temp1', '100,0')
+        self.set_setting('SYSTEM', 'soll_temp2', '160,0')
+        self.set_setting('SYSTEM', 'umgebung_temp', '22,0')
+
+        # VDE-Standardwerte
+        self.set_setting('SYSTEM', 'nennspannung', '230')
+        self.set_setting('SYSTEM', 'frequenz', '50')
+        self.set_setting('SYSTEM', 'cosphi', '1')
 
     def get_setting(self, section, option, default=None):
         """Liest eine Einstellung oder gibt den Standardwert zurück."""
@@ -124,8 +170,12 @@ class Settings:
         self.set_setting('PATH', 'protokolle', path)
 
     def get_protokoll_path(self):
-        """Liest den Pfad für die Protokolle aus der INI-Datei."""
-        return self.get_setting('PATH', 'protokolle', os.path.join(os.getcwd(), 'Protokolle'))
+        """Liest den Pfad fuer die Protokolle aus der INI-Datei."""
+        if getattr(sys, 'frozen', False):
+            standard = os.path.join(os.path.dirname(sys.executable), 'Protokolle')
+        else:
+            standard = os.path.join(os.getcwd(), 'Protokolle')
+        return self.get_setting('PATH', 'protokolle', standard)
 
     # --- Data-Verzeichnis ---
 

@@ -26,6 +26,7 @@ gleichzeitig Pruefprotokolle erstellen.
 
 ```
 main.py                  # Einstiegspunkt (QApplication, Inter-Schriftart laden)
+version.py               # Zentrale Versionsnummer (__version__, Semantic Versioning)
 ui/
   __init__.py
   main_window.py         # Hauptfenster (Frameless, Sidebar, Content, Win32 Snap/Resize)

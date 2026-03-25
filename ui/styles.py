@@ -167,10 +167,7 @@ def generiere_stylesheet(farben: dict) -> str:
 
     /* Content-Container (Margin um Content) */
     QWidget#contentContainer {{
-        background-color: qlineargradient(
-            x1:0, y1:0, x2:0, y2:1,
-            stop:0 {farben["basis"]}, stop:1 {farben["aktiv_bg"]}
-        );
+        background-color: {farben["basis"]};
         border-bottom-right-radius: 8px;
     }}
 

@@ -1,12 +1,13 @@
 import os
 import sys
-import configparser
 import base64
 import io
 
 from string import Template
 from datetime import datetime, timedelta
 from PIL import Image
+
+from settings import Settings
 
 
 class PDFGeneratorBase:
@@ -20,22 +21,22 @@ class PDFGeneratorBase:
         self.stored_data['title_data'] = title
 
     def add_company_and_inspector_data(self):
-        """Fügt Firmen- und Prüferdaten aus der Konfigurationsdatei hinzu."""
-        config = configparser.ConfigParser()
-        config.read('settings.ini')
+        """Fuegt Firmen- und Prueferdaten aus der Konfigurationsdatei hinzu."""
+        s = Settings("settings.ini")
+        firmendaten = s.get_company_data()
 
-        firma = config['FIRMA']['firma']
-        strasse = config['FIRMA']['strasse']
-        plz = config['FIRMA']['plz']
-        ort = config['FIRMA']['ort']
-        land = config.get('FIRMA', 'land', fallback='Germany')
-        telefon = config.get('FIRMA', 'telefon', fallback='')
-        webseite = config.get('FIRMA', 'webseite', fallback='')
+        firma = firmendaten['firma']
+        strasse = firmendaten['strasse']
+        plz = firmendaten['plz']
+        ort = firmendaten['ort']
+        land = firmendaten['land']
+        telefon = firmendaten['telefon']
+        webseite = firmendaten['webseite']
 
-        logo_bild = self._resolve_bild_pfad(config['FIRMA']['logo'])
-        pruefer_name = config['PRUEFER']['name']
-        unterschrift_bild = self._resolve_bild_pfad(config['PRUEFER']['unterschrift'])
-        stempel_bild = self._resolve_bild_pfad(config['FIRMA']['stempel'])
+        logo_bild = s.get_logo_path()
+        pruefer_name = s.get_pruefer_name()
+        unterschrift_bild = s.get_signature_path()
+        stempel_bild = s.get_stamp_path()
 
         # Initialisiere logo_str, img_str und stempel_str mit leeren Strings
         logo_str = ""
@@ -142,22 +143,6 @@ class PDFGeneratorBase:
 
     def get_calibration_number(self):
         return self.generate_calibration_number()
-
-    @staticmethod
-    def _resolve_bild_pfad(dateiname):
-        """Loest einen Bilddateinamen zum vollstaendigen Pfad auf.
-        Sucht zuerst in data/, dann im Arbeitsverzeichnis."""
-        if not dateiname:
-            return dateiname
-        # Wenn bereits absoluter Pfad, direkt verwenden
-        if os.path.isabs(dateiname) and os.path.exists(dateiname):
-            return dateiname
-        # Zuerst in data/ suchen
-        data_pfad = os.path.join(os.getcwd(), 'data', dateiname)
-        if os.path.exists(data_pfad):
-            return data_pfad
-        # Fallback: Arbeitsverzeichnis
-        return dateiname
 
     @staticmethod
     def _verarbeite_bild(bild_pfad, breite=None, hoehe=None):

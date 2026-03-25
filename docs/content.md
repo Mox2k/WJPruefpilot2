@@ -184,29 +184,29 @@
 > dort stehen die Implementierungsdetails.
 
 #### 6.1 Versionierung — Spec §1
-- [ ] `version.py` im Projekt-Root (`__version__ = "2.0.0"`)
-- [ ] Import in `main.py`, Info-Seite, Updater, PyInstaller
+- [x] `version.py` im Projekt-Root (`__version__ = "2.0.0"`)
+- [x] Import in Info-Seite (`from version import __version__`)
 
 #### 6.2 Benutzerdaten nach %APPDATA% — Spec §2
-- [ ] `settings.py` auf `%APPDATA%\WJPruefpilot\` umstellen (nur wenn `sys.frozen`)
-- [ ] `data/`-Ordner (Bilder) ebenfalls nach AppData
-- [ ] Erststart-Defaults (Protokollpfad, Theme, Temperaturen, VDE-Werte)
-- [ ] Rueckwaertsmigration: alte `settings.ini` neben `.exe` einmalig kopieren
+- [x] `settings.py` auf `%APPDATA%\WJPruefpilot\` umstellen (nur wenn `sys.frozen`)
+- [x] `data/`-Ordner (Bilder) ebenfalls nach AppData
+- [x] Erststart-Defaults (Protokollpfad, Theme, Temperaturen, VDE-Werte)
+- ~~Rueckwaertsmigration~~ (entfaellt, keine bestehenden Nutzer)
 
 #### 6.3 Pfad-Referenzen anpassen — Spec §2 (Betroffene Stellen)
-- [ ] `main.py` — Settings-Pfad
-- [ ] `pdf_base_generator.py` — Bildpfade (bereits ueber Settings)
-- [ ] `ui/settings_overlay.py` — Bild-Upload nach AppData/data/
+- [x] `pdf_base_generator.py` — auf Settings-Klasse umgestellt (kein direkter configparser mehr)
+- [x] `ui/settings_overlay.py` — nutzt bereits `get_data_verzeichnis()` (keine Aenderung noetig)
+- ~~`main.py`~~ (erstellt kein Settings-Objekt, keine Aenderung noetig)
 
 #### 6.4 App-Icon — Spec §3
-- [ ] `assets/icons/Asset 10.svg` → `wjpruefpilot.ico` (multi-size)
-- [ ] PyInstaller-Konfiguration (`--icon=`)
+- [x] `assets/icons/Asset 10.svg` → `wjpruefpilot.ico` (multi-size)
+- [x] PyInstaller-Konfiguration (`--icon=`)
 
 #### 6.5 GitHub Actions Build — Spec §4
-- [ ] `.github/workflows/build.yml` erstellen
-- [ ] Trigger auf Tag-Push (`v*`), Build-Step mit `shell: cmd`
-- [ ] PyInstaller-Build auf `windows-latest`
-- [ ] Automatisches GitHub Release mit `.exe` als Asset
+- [x] `.github/workflows/build.yml` erstellen
+- [x] Trigger auf Tag-Push (`v*`), Build-Step mit `shell: cmd`
+- [x] PyInstaller-Build auf `windows-latest`
+- [x] Automatisches GitHub Release mit `.exe` als Asset
 
 #### 6.6 Auto-Updater — Spec §5
 - [ ] `updater.py` — GitHub API Check im Hintergrund-Thread
@@ -222,7 +222,7 @@
 
 #### 6.8 Settings-Integration & Info-Seite — Spec §1 + §5 (Konfiguration)
 - [ ] Toggle "Automatisch nach Updates suchen" im System-Tab
-- [ ] Info-Seite: `VERSION`-Konstante entfernen, `from version import __version__` verwenden
+- [x] Info-Seite: `VERSION`-Konstante entfernt, nutzt `from version import __version__` (in 6.1 erledigt)
 
 #### 6.9 Manueller Testlauf (Update-Simulation) — Spec §7
 - [ ] Lokaler PyInstaller-Build mit v2.0.0, Settings-Migration pruefen
