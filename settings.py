@@ -9,12 +9,11 @@ class Settings:
         self.config_file = config_file
         self.config = configparser.ConfigParser()
         self.data = {}
-        self.load_settings()
-        # Versuchen, die INI-Datei zu laden, falls sie existiert
         try:
             self.config.read(self.config_file)
         except configparser.Error:
             pass  # Wenn die Datei nicht vorhanden ist oder fehlerhaft ist, weitermachen
+        self.load_settings()
 
     def get_setting(self, section, option, default=None):
         """Liest eine Einstellung oder gibt den Standardwert zurück."""
@@ -92,36 +91,28 @@ class Settings:
         for name, wert in messgeraete.items():
             self.set_setting('MESSGERAETE', name, wert)
 
+    def _bild_pfad_aufloesen(self, section, option):
+        """Loest einen Bild-Dateinamen zur vollstaendigen Pfadangabe auf.
+        Sucht zuerst in data/, dann im Arbeitsverzeichnis."""
+        filename = self.get_setting(section, option, '')
+        if not filename:
+            return None
+        data_pfad = os.path.join(self.get_data_verzeichnis(), filename)
+        if os.path.exists(data_pfad):
+            return data_pfad
+        return os.path.join(os.getcwd(), filename)
+
     def get_logo_path(self):
         """Liest den Pfad zum Firmenlogo aus der INI-Datei."""
-        filename = self.get_setting('FIRMA', 'logo', '')
-        if filename:
-            # Zuerst in data/ suchen, dann Fallback auf Arbeitsverzeichnis
-            data_pfad = os.path.join(self.get_data_verzeichnis(), filename)
-            if os.path.exists(data_pfad):
-                return data_pfad
-            return os.path.join(os.getcwd(), filename)
-        return None
+        return self._bild_pfad_aufloesen('FIRMA', 'logo')
 
     def get_signature_path(self):
         """Liest den Pfad zur Unterschrift aus der INI-Datei."""
-        filename = self.get_setting('PRUEFER', 'unterschrift', '')
-        if filename:
-            data_pfad = os.path.join(self.get_data_verzeichnis(), filename)
-            if os.path.exists(data_pfad):
-                return data_pfad
-            return os.path.join(os.getcwd(), filename)
-        return None
+        return self._bild_pfad_aufloesen('PRUEFER', 'unterschrift')
 
     def get_stamp_path(self):
         """Liest den Pfad zum Firmenstempel aus der INI-Datei."""
-        filename = self.get_setting('FIRMA', 'stempel', '')
-        if filename:
-            data_pfad = os.path.join(self.get_data_verzeichnis(), filename)
-            if os.path.exists(data_pfad):
-                return data_pfad
-            return os.path.join(os.getcwd(), filename)
-        return None
+        return self._bild_pfad_aufloesen('FIRMA', 'stempel')
 
     def set_stamp_path(self, path):
         """Speichert den Pfad zum Firmenstempel in der INI-Datei."""
@@ -373,9 +364,8 @@ class Settings:
         self.load_settings()
 
     def load_settings(self):
-        """Liest die Einstellungen aus der settings.ini Datei."""
-        config = configparser.ConfigParser()
-        config.read('settings.ini')
-        for section in config.sections():
-            for key, value in config.items(section):
+        """Liest die Einstellungen aus der INI-Datei in self.data."""
+        self.data = {}
+        for section in self.config.sections():
+            for key, value in self.config.items(section):
                 self.data[key] = value

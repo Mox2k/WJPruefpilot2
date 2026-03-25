@@ -168,7 +168,6 @@ class OverlayDialog(QWidget):
         if self.parent():
             self.setGeometry(self.parent().rect())
 
-        self._wende_styles_an()
         self.show()
         self.raise_()
         self._animiere_einblenden()
@@ -180,13 +179,8 @@ class OverlayDialog(QWidget):
     def setze_farben(self, farben: dict):
         """Aktualisiert die Farbpalette."""
         self._farben = farben
-        self._wende_styles_an()
 
     # --- Interne Methoden ---
-
-    def _wende_styles_an(self):
-        """Styles werden global ueber styles.py angewendet (ObjectNames dialogBox/dialogTitel/etc.)."""
-        pass
 
     def _animiere_einblenden(self):
         """Fade-Animation beim Einblenden."""

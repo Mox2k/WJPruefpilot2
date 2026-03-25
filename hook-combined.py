@@ -3,7 +3,7 @@ from PyInstaller.utils.hooks import collect_submodules, collect_data_files
 hiddenimports = collect_submodules('xhtml2pdf')
 hiddenimports += collect_submodules('PIL')
 hiddenimports += collect_submodules('reportlab')
-hiddenimports=['reportlab.graphics.barcode.code128'],
+hiddenimports += ['reportlab.graphics.barcode.code128']
 hiddenimports += collect_submodules('matplotlib')
 hiddenimports += [
     'html5lib', 'pypdf', 'svglib', 'webencodings', 'olefile',

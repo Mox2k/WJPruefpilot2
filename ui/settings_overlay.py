@@ -843,6 +843,7 @@ class SettingsOverlay(QWidget):
         ib_grid.setSpacing(6)
         for i, (key, label) in enumerate(infobox_items):
             toggle_btn = QPushButton(f"  {label}")
+            toggle_btn.setObjectName("infoboxToggle")
             toggle_btn.setCursor(Qt.PointingHandCursor)
             toggle_btn.setFixedHeight(32)
             toggle_btn.setProperty("bestanden", self._settings.get_infobox_anzeigen(key))
@@ -883,11 +884,6 @@ class SettingsOverlay(QWidget):
                 farbe = self._aktuelle_farben.get("fehler", "#f44336")
                 btn.setIcon(qta.icon("ri.close-circle-line", color=farbe))
             btn.setIconSize(QSize(22, 22))
-            btn.setStyleSheet(
-                f"QPushButton {{ background: transparent; border: none; "
-                f"text-align: left; font-size: 13px; padding-left: 2px; "
-                f"color: {text_farbe}; }}"
-            )
 
     # --- Oeffentliche Methoden ---
 

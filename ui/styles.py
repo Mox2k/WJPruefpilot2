@@ -151,6 +151,16 @@ def generiere_stylesheet(farben: dict) -> str:
         color: {farben["text_aktiv"]};
     }}
 
+    /* Sidebar Logo */
+    QWidget#logoContainer {{
+        background: transparent;
+    }}
+    QLabel#logoText {{
+        font-size: 16px;
+        font-weight: bold;
+        color: {farben["text_primaer"]};
+    }}
+
     /* Hauptbereich */
     QWidget#hauptbereich {{
         background-color: {farben["basis"]};
@@ -665,6 +675,15 @@ def generiere_stylesheet(farben: dict) -> str:
     QWidget#settingsOverlay {{
         background-color: {farben["basis_hell"]};
         border-radius: 14px;
+    }}
+
+    QPushButton#infoboxToggle {{
+        background: transparent;
+        border: none;
+        text-align: left;
+        font-size: 13px;
+        padding-left: 2px;
+        color: {farben["text_primaer"]};
     }}
 
     QWidget#settingsTabPanel {{

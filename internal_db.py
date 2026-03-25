@@ -1,15 +1,6 @@
-import sqlite3
+"""Interne Datenbank fuer zukuenftige Features.
 
-
-class InternalDatabase:
-    """Klasse für den Zugriff auf die interne SQLite-Datenbank."""
-
-    def __init__(self, db_path):
-        self.db_path = db_path
-        # ... (Verbindung zur Datenbank herstellen, Tabellen erstellen)
-
-    def save_pruefung(self, waage_id, pruefungsdaten):
-        """Speichert die Prüfergebnisse einer Waage."""
-        # ...
-
-    # ... (Weitere Funktionen zum Speichern/Laden von Prüfdaten)
+Geplant fuer: Pruefgewichte-Kalibrierung, Ergebnisse vorheriger
+Pruefungen, letzte Pruefungsdaten pro Waage.
+Aktuell nicht implementiert — wird bei Bedarf ausgebaut.
+"""

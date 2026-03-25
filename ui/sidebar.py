@@ -96,8 +96,8 @@ class Sidebar(QWidget):
 
         # Logo-Bereich: Icon + optionaler Text "Pruefpilot"
         self._logo_container = QWidget()
+        self._logo_container.setObjectName("logoContainer")
         self._logo_container.setFixedHeight(44)
-        self._logo_container.setStyleSheet("background: transparent;")
         logo_layout = QHBoxLayout(self._logo_container)
         logo_layout.setContentsMargins(8, 4, 8, 4)
         logo_layout.setSpacing(8)
@@ -114,7 +114,6 @@ class Sidebar(QWidget):
         # Text "Pruefpilot" (nur sichtbar wenn ausgeklappt)
         self._logo_text = QLabel("Pruefpilot")
         self._logo_text.setObjectName("logoText")
-        self._logo_text.setStyleSheet("font-size: 16px; font-weight: bold;")
         self._logo_text.setVisible(False)
         logo_layout.addWidget(self._logo_text, alignment=Qt.AlignVCenter)
 
@@ -202,7 +201,4 @@ class Sidebar(QWidget):
         if os.path.exists(logo_pfad):
             self._logo_widget.load(logo_pfad)
 
-        # Logo-Text Farbe
-        self._logo_text.setStyleSheet(
-            f"font-size: 16px; font-weight: bold; color: {text_primaer};"
-        )
+        # Logo-Text Farbe wird ueber styles.py gesteuert

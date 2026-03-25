@@ -13,7 +13,7 @@ Zielgruppe: Techniker im Aussendienst, die waehrend der Kalibrierung von Waagen 
 - **PDF:** xhtml2pdf (HTML-Templates)
 - **Diagramme:** matplotlib
 - **Datenbank:** SQLite (read-only, SimplyCal)
-- **Build:** PyInstaller (Windows .exe, --onefile --windowed)
+- **Build:** GitHub Actions + PyInstaller (Windows .exe)
 - **Plattform:** Ausschliesslich Windows
 
 ### Hauptfunktionen

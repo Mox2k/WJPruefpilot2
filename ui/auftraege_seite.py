@@ -223,7 +223,6 @@ class AuftraegeSeite(QWidget):
         # Titel
         self._titel = QLabel("SimplyCal")
         self._titel.setObjectName("seitenTitel")
-        self._titel.setStyleSheet("padding: 0px;")
         layout.addWidget(self._titel)
 
         # Datenbank + Auftrags-Auswahl

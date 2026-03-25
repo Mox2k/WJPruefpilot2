@@ -71,6 +71,7 @@ class PDFGeneratorTemp(PDFGeneratorBase):
                 'umgebung_temp': umgebung_temp,
                 'chart_str': chart_str
             }
+            plt.clf()
             plt.close()
 
         except (KeyError, ValueError, TypeError) as e:
@@ -103,15 +104,15 @@ class PDFGeneratorTemp(PDFGeneratorBase):
             Abweichung_Text_eng = "During the calibration, a deviation in the heating characteristic of the moisture analyzer was detected. This deviation was corrected according to the manufacturer's specific instructions to ensure the accuracy of the measurements."
 
         Aufheizzyklus = self.data_to_append.get('waage_data', {}).get('Aufheizzyklus', '')
-        if Aufheizzyklus == "None":
+        if not Aufheizzyklus or Aufheizzyklus == "None":
             Aufheizzyklus = 15
 
         TempHerstellertoleranz = self.data_to_append.get('waage_data', {}).get('TempHerstellertoleranz', '')
-        toleranz_text = "Herstellerzoleranz"
+        toleranz_text = "Herstellertoleranz"
         toleranz_text_eng = "Manufacturer's tolerance"
-        if TempHerstellertoleranz == "None":
+        if not TempHerstellertoleranz or TempHerstellertoleranz == "None":
             TempHerstellertoleranz = 5.0
-            toleranz_text = "Tolleranz"
+            toleranz_text = "Toleranz"
             toleranz_text_eng = "Tolerance"
 
         # Mindestens eine Nachkommastelle

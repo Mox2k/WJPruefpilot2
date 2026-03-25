@@ -481,19 +481,18 @@ class MainWindow(QMainWindow):
 
     def _temp_pdf_erstellt(self, kalibrier_nr):
         """Aktualisiert die Tabelle nach erfolgreicher Temp-PDF-Erstellung."""
-        # Kalibrierscheinnummer: TK_XX_MMJJ_WJNummer -> WJ-Nummer extrahieren
-        teile = kalibrier_nr.split("_")
-        if len(teile) >= 4:
-            wj_nummer = "_".join(teile[3:])  # Falls WJ-Nummer selbst _ enthaelt
-            self._auftraege_seite.aktualisiere_status(wj_nummer, "temp")
+        self._pdf_erstellt(kalibrier_nr, "temp")
 
     def _vde_pdf_erstellt(self, kalibrier_nr):
         """Aktualisiert die Tabelle nach erfolgreicher VDE-PDF-Erstellung."""
-        # Kalibrierscheinnummer: VDE_XX_MMJJ_WJNummer -> WJ-Nummer extrahieren
+        self._pdf_erstellt(kalibrier_nr, "vde")
+
+    def _pdf_erstellt(self, kalibrier_nr, art):
+        """Extrahiert die WJ-Nummer aus der Kalibrierscheinnummer und aktualisiert die Tabelle."""
         teile = kalibrier_nr.split("_")
         if len(teile) >= 4:
-            wj_nummer = "_".join(teile[3:])
-            self._auftraege_seite.aktualisiere_status(wj_nummer, "vde")
+            wj_nummer = "_".join(teile[3:])  # Falls WJ-Nummer selbst _ enthaelt
+            self._auftraege_seite.aktualisiere_status(wj_nummer, art)
 
     # --- Settings ---
 
@@ -528,13 +527,16 @@ class MainWindow(QMainWindow):
         self._sidebar_max_animation.setEndValue(ziel_breite)
         self._sidebar_max_animation.setEasingCurve(QEasingCurve.InOutCubic)
 
+        self._sidebar_anim_gruppe = QParallelAnimationGroup()
+        self._sidebar_anim_gruppe.addAnimation(self._sidebar_animation)
+        self._sidebar_anim_gruppe.addAnimation(self._sidebar_max_animation)
+
         if wird_ausgeklappt:
-            self._sidebar_animation.finished.connect(
+            self._sidebar_anim_gruppe.finished.connect(
                 lambda: self._sidebar.aktualisiere_labels(True)
             )
 
-        self._sidebar_animation.start()
-        self._sidebar_max_animation.start()
+        self._sidebar_anim_gruppe.start()
 
     # --- Theme ---
 

@@ -95,7 +95,7 @@ class PDFGeneratorVDE(PDFGeneratorBase):
                                                         0) == 1 else kreuz
         bemessung = haken if visuelle_pruefung_daten.get("Bemessung der zugänglichen Gerätesicherung",
                                                          0) == 1 else kreuz
-        bauteile = haken if visuelle_pruefung_daten.get("Beuteile und Baugruppen", 0) == 1 else kreuz
+        bauteile = haken if visuelle_pruefung_daten.get("Bauteile und Baugruppen", 0) == 1 else kreuz
         ueberlastung = haken if visuelle_pruefung_daten.get("Anzeichen von Überlastung/unsachgemäßem Gebrauch",
                                                             0) == 1 else kreuz
         verschmutzung_vis = haken if visuelle_pruefung_daten.get(
@@ -139,9 +139,9 @@ class PDFGeneratorVDE(PDFGeneratorBase):
                 messgroessen[key] = '-'
                 pruefergebnis[key] = '-'
 
-            # Funktion des Gerätes i.O. Checkbox-Status abrufen
-            funktion_io = self.data_to_append['vde_data']['elektrische_pruefung_daten'].get('funktion_check_var', 0)
-            funktion_io_symbol = haken if funktion_io == 1 else kreuz
+        # Funktion des Gerätes i.O. Checkbox-Status abrufen
+        funktion_io = self.data_to_append['vde_data']['elektrische_pruefung_daten'].get('funktion_check_var', 0)
+        funktion_io_symbol = haken if funktion_io == 1 else kreuz
 
         # Überprüfung der visuellen Prüfung
         visuelle_pruefung_bestanden = all(

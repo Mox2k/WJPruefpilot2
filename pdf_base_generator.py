@@ -43,12 +43,6 @@ class PDFGeneratorBase:
         stempel_str = ""
 
         try:
-            # Funktion zum Konvertieren von Palettenbildern mit Transparenz in RGBA
-            def convert_to_rgba(img):
-                if img.mode == 'P':
-                    return img.convert('RGBA')
-                return img
-
             # Überprüfen Sie, ob die Dateien existieren
             if not os.path.exists(logo_bild):
                 raise FileNotFoundError(f"Logobild nicht gefunden: {logo_bild}")
@@ -57,47 +51,9 @@ class PDFGeneratorBase:
             if not os.path.exists(stempel_bild):
                 raise FileNotFoundError(f"Stempelbild nicht gefunden: {stempel_bild}")
 
-            # Bild öffnen und Größe anpassen (Logo)
-            with Image.open(logo_bild) as logo:
-                logo = convert_to_rgba(logo)
-                # Berechne neue Größe unter Beibehaltung des Seitenverhältnisses
-                base_width = 1600
-                w_percent = (base_width / float(logo.size[0]))
-                h_size = int((float(logo.size[1]) * float(w_percent)))
-                logo = logo.resize((base_width, h_size), Image.LANCZOS)
-
-                # Bild im Speicher zwischenspeichern (Logo)
-                logo_buffered = io.BytesIO()
-                logo.save(logo_buffered, format="PNG", optimize=True, quality=95)
-                logo_str = base64.b64encode(logo_buffered.getvalue()).decode('utf-8')
-
-            # Bild öffnen und Größe anpassen (Unterschrift)
-            with Image.open(unterschrift_bild) as img:
-                img = convert_to_rgba(img)
-                # Berechne neue Größe unter Beibehaltung des Seitenverhältnisses
-                base_height = 600
-                h_percent = (base_height / float(img.size[1]))
-                w_size = int((float(img.size[0]) * float(h_percent)))
-                img = img.resize((w_size, base_height), Image.LANCZOS)
-
-                # Bild im Speicher zwischenspeichern (Unterschrift)
-                buffered = io.BytesIO()
-                img.save(buffered, format="PNG", optimize=True, quality=95)
-                img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
-
-            # Bild öffnen und Größe anpassen (Stempel)
-            with Image.open(stempel_bild) as stempel:
-                stempel = convert_to_rgba(stempel)
-                # Berechne neue Größe unter Beibehaltung des Seitenverhältnisses
-                base_width = 800
-                w_percent = (base_width / float(stempel.size[0]))
-                h_size = int((float(stempel.size[1]) * float(w_percent)))
-                stempel = stempel.resize((base_width, h_size), Image.LANCZOS)
-
-                # Bild im Speicher zwischenspeichern (Stempel)
-                stempel_buffered = io.BytesIO()
-                stempel.save(stempel_buffered, format="PNG", optimize=True, quality=95)
-                stempel_str = base64.b64encode(stempel_buffered.getvalue()).decode('utf-8')
+            logo_str = self._verarbeite_bild(logo_bild, breite=1600)
+            img_str = self._verarbeite_bild(unterschrift_bild, hoehe=600)
+            stempel_str = self._verarbeite_bild(stempel_bild, breite=800)
 
         except (FileNotFoundError, OSError) as e:
             print(f"Error loading or processing image: {e}")
@@ -203,16 +159,35 @@ class PDFGeneratorBase:
         # Fallback: Arbeitsverzeichnis
         return dateiname
 
+    @staticmethod
+    def _verarbeite_bild(bild_pfad, breite=None, hoehe=None):
+        """Oeffnet ein Bild, konvertiert zu RGBA, skaliert proportional und gibt Base64 zurueck.
+        Entweder breite oder hoehe angeben — das andere wird proportional berechnet."""
+        with Image.open(bild_pfad) as bild:
+            if bild.mode == 'P':
+                bild = bild.convert('RGBA')
+            if breite:
+                faktor = breite / float(bild.size[0])
+                neue_hoehe = int(float(bild.size[1]) * faktor)
+                bild = bild.resize((breite, neue_hoehe), Image.LANCZOS)
+            elif hoehe:
+                faktor = hoehe / float(bild.size[1])
+                neue_breite = int(float(bild.size[0]) * faktor)
+                bild = bild.resize((neue_breite, hoehe), Image.LANCZOS)
+            puffer = io.BytesIO()
+            bild.save(puffer, format="PNG", optimize=True, quality=95)
+            return base64.b64encode(puffer.getvalue()).decode('utf-8')
+
     def _build_kunde_string(self):
         """Baut den Kunden-String mit optionalen Zusatzzeilen."""
         Kunde = self.data_to_append.get('waage_data', {}).get('Kunde_name1', '')
 
         if self.data_to_append.get('waage_data', {}).get('Kunde_name2', '') != "":
             Kunde = self.data_to_append.get('waage_data', {}).get('Kunde_name1', '') + "<br>" + self.data_to_append.get(
-                'waage_data', {}).get('Kunde_name2', )
+                'waage_data', {}).get('Kunde_name2', '')
         elif self.data_to_append.get('waage_data', {}).get('Kunde_name3', '') != "":
             Kunde = self.data_to_append.get('waage_data', {}).get('Kunde_name1', '') + "<br>" + self.data_to_append.get(
-                'waage_data', {}).get('Kunde_name2', ) + "<br>" + self.data_to_append.get('waage_data', {}).get(
+                'waage_data', {}).get('Kunde_name2', '') + "<br>" + self.data_to_append.get('waage_data', {}).get(
                 'Kunde_name3', )
 
         return Kunde

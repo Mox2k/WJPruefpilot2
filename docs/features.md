@@ -1,16 +1,17 @@
 # Feature-Planung WJPruefpilot
 
-Erstellt: 2026-03-22
-
 ---
 
-## Bereits geplante Features (aus CLAUDE.md)
+## Geplante Features (nach Prioritaet)
 
-- [ ] VDE-Wizard (3-Seiten, Schritt 3.5)
-- [ ] Auto-Update-Mechanismus
-- [ ] Pruefgewichte-Kalibrierung (eigener Kalibrierschein)
+- [x] GUI-Migration: Tkinter -> PySide6 (Schritt 5 Feinschliff offen)
+- [x] VDE-Wizard (3-Seiten, Schritt 3.5)
+- [ ] Auto-Update-Mechanismus — Spec: `docs/specs/build-und-auto-update.md`
+- [ ] Pruefgewichte-Kalibrierung (eigener Kalibrierschein) — Spec: `docs/specs/2026-03-22-pruefgewichte-kalibrierung-design.md`
 - [ ] Zaehlwaagen-Kalibrierschein (Stueckstreuung)
 - [ ] VDE-Erweiterungen (Drucker, angeschlossene Geraete)
+- [ ] Zentrale `__version__` Variable statt hardcoded im Info-Fenster
+- [ ] Ergebnisse vorheriger Pruefungen anzeigen
 
 ---
 
@@ -18,27 +19,13 @@ Erstellt: 2026-03-22
 
 ### Hauptfeatures
 
-#### Gross
-
 - [ ] **Waagenliste als PDF** -- Geraeteuebersicht eines Auftrags als druckbare Liste
 - [ ] **Wartungsprotokoll** -- Allgemeines Wartungs-/Serviceprotokoll fuer Waagen (Reinigung, mechanische Pruefung, Justage-Dokumentation)
 - [ ] **Auftrag abschliessen** -- Auftrag als erledigt markieren wenn alle Waagen geprueft sind
 
-#### Mittel
-
-_(keine)_
-
-#### Klein
-
-_(keine)_
-
 ---
 
 ### Ausgabe & Export
-
-#### Gross
-
-_(keine)_
 
 #### Mittel
 
@@ -51,10 +38,6 @@ _(keine)_
 ---
 
 ### Stabilitaet & Qualitaet
-
-#### Gross
-
-_(keine)_
 
 #### Mittel
 
@@ -70,10 +53,6 @@ _(keine)_
 
 ### Einstellungen & Konfiguration
 
-#### Gross
-
-_(keine)_
-
 #### Mittel
 
 - [ ] **Messgeraete-Kalibrierablauf** -- Kalibrierintervall pro Messgeraet in den Settings hinterlegen, Warnung wenn Nachkalibrierung faellig
@@ -81,6 +60,7 @@ _(keine)_
 #### Klein
 
 - [ ] **Zentrale Versionsnummer** -- `__version__` Variable statt hardcoded
+- [ ] **Eingaben-Persistenz ueber Programmende** -- Formulareingaben pro Waage dauerhaft speichern (JSON oder SQLite)
 - [ ] **Letztes Messgeraet merken** -- Zuletzt gewaehltes Messgeraet automatisch vorauswaehlen
 - [ ] **Spalten-Sortierung merken** -- Letzte Tabellen-Sortierung speichern und wiederherstellen
 - [ ] **Bemerkungen-Vorlagen** -- Haeufig verwendete Bemerkungstexte als Schnellauswahl speichern
@@ -89,10 +69,6 @@ _(keine)_
 ---
 
 ### Usability
-
-#### Gross
-
-_(keine)_
 
 #### Mittel
 
@@ -116,17 +92,9 @@ _(keine)_
 
 ### Design & UI
 
-#### Gross
-
-_(keine)_
-
 #### Mittel
 
 - [ ] **UI-Konsistenz** -- Einheitliche Buttongroessen, abgerundete Eingabefelder, Hover-/Press-Animationen, Scrollbar-Styling, Schatten/Elevation, sichtbare Fokus-Ringe
-
-#### Mittel
-
-_(keine)_
 
 #### Klein
 

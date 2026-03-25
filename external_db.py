@@ -76,25 +76,22 @@ class ExternalDatabase:
                 )
                 return cursor.fetchall()
         except sqlite3.Error as e:
-            print(f"Fehler beim Lesen der Datenbank: {e}")
-            return []
+            raise RuntimeError(f"Fehler beim Lesen der Waagendaten: {e}") from e
 
     def get_auftragsinformationen(self):
         """Liest Auftragsinformationen (Auftragsnummer und Firma) aus der Datenbank."""
         try:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
-                # Abfrage angepasst, um Auftragsnummer, Kundennummer und Firmennamen zu erhalten
                 cursor.execute("""
-                    SELECT auf_nummer_bez, auf_kunde, adr_name1 
+                    SELECT auf_nummer_bez, auf_kunde, adr_name1
                     FROM auftrag
                     JOIN adress ON auf_kunde = adr_nummer
                     ORDER BY auf_nr DESC
                 """)
                 return cursor.fetchall()
         except sqlite3.Error as e:
-            print(f"Fehler beim Lesen der Datenbank: {e}")
-            return []
+            raise RuntimeError(f"Fehler beim Lesen der Auftragsinformationen: {e}") from e
 
     def get_auftragsdaten(self, auftragsnummer):
         """Gibt die Kundennummer und den Kundennamen für eine bestimmte Auftragsnummer zurück."""
@@ -110,5 +107,4 @@ class ExternalDatabase:
                 else:
                     return None, None
         except sqlite3.Error as e:
-            print(f"Fehler beim Lesen der Datenbank: {e}")
-            return None, None
+            raise RuntimeError(f"Fehler beim Lesen der Auftragsdaten: {e}") from e

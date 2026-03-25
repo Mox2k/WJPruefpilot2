@@ -22,6 +22,7 @@ class TitleBar(QWidget):
         self.setFixedHeight(self.HOEHE)
         self._ist_dark = True
         self._icon_farbe = "#8a8fa0"
+        self._sidebar_offen = False
         self._erstelle_ui()
 
     def _erstelle_ui(self):
@@ -73,7 +74,7 @@ class TitleBar(QWidget):
         self._btn_maximieren = QPushButton()
         self._btn_maximieren.setObjectName("titleButton")
         self._btn_maximieren.setIcon(
-            qta.icon("ri.checkbox-blank-line", color=self._icon_farbe, scale_factor=0.65)
+            qta.icon("ri.checkbox-blank-line", color=self._icon_farbe, scale_factor=0.7)
         )
         self._btn_maximieren.setIconSize(icon_groesse)
         self._btn_maximieren.setFixedSize(btn_groesse)
