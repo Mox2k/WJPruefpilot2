@@ -113,10 +113,7 @@ def generiere_stylesheet(farben: dict) -> str:
 
     /* Sidebar */
     QWidget#sidebar {{
-        background-color: qlineargradient(
-            x1:0, y1:0, x2:0, y2:1,
-            stop:0 {farben["basis"]}, stop:1 {farben["aktiv_bg"]}
-        );
+        background-color: {farben["basis"]};
         border-bottom-left-radius: 8px;
     }}
 
@@ -189,7 +186,7 @@ def generiere_stylesheet(farben: dict) -> str:
 
     QLabel#seitenTitel {{
         color: {farben["text_primaer"]};
-        font-family: "Plus Jakarta Sans";
+        font-family: "Inter";
         font-size: 22px;
         font-weight: 600;
         padding: 0px;
@@ -200,7 +197,7 @@ def generiere_stylesheet(farben: dict) -> str:
     /* Detail-Seite Header */
     QLabel#detailSeitenTitel {{
         color: {farben["text_primaer"]};
-        font-family: "Plus Jakarta Sans";
+        font-family: "Inter";
         font-size: 20px;
         font-weight: 600;
         padding: 0px;
@@ -351,7 +348,7 @@ def generiere_stylesheet(farben: dict) -> str:
 
     QLabel#detailTitel {{
         color: {farben["text_primaer"]};
-        font-family: "Plus Jakarta Sans";
+        font-family: "Inter";
         font-size: 20px;
         font-weight: 600;
     }}
@@ -622,7 +619,7 @@ def generiere_stylesheet(farben: dict) -> str:
     }}
 
     QLabel#dialogTitel {{
-        font-family: "Plus Jakarta Sans";
+        font-family: "Inter";
         font-size: 14px;
         font-weight: 600;
         color: {farben["text_primaer"]};
@@ -718,7 +715,7 @@ def generiere_stylesheet(farben: dict) -> str:
 
     QLabel#settingsSectionTitel {{
         color: {farben["text_primaer"]};
-        font-family: "Plus Jakarta Sans";
+        font-family: "Inter";
         font-size: 16px;
         font-weight: 600;
     }}

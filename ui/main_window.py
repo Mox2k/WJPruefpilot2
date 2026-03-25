@@ -19,6 +19,7 @@ from ui.sidebar import Sidebar
 from ui.auftraege_seite import AuftraegeSeite
 from ui.detail_temp_seite import DetailTempSeite
 from ui.detail_vde_seite import DetailVDESeite
+from ui.info_seite import InfoSeite
 from ui.overlay_dialog import OverlayDialog
 from ui.settings_overlay import SettingsOverlay
 from ui.styles import FARBEN_DARK, FARBEN_LIGHT, generiere_stylesheet
@@ -303,16 +304,9 @@ class MainWindow(QMainWindow):
         self._auftraege_seite.vde_geklickt.connect(self._oeffne_vde_detail)
         self._content_stack.addWidget(self._auftraege_seite)
 
-        # Info-Seite (Index 1) -- Platzhalter
-        info_seite = QWidget()
-        info_seite.setObjectName("contentSeite")
-        info_layout = QVBoxLayout(info_seite)
-        info_label = QLabel("Info")
-        info_label.setObjectName("seitenTitel")
-        info_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-        info_layout.addWidget(info_label)
-        info_layout.addStretch()
-        self._content_stack.addWidget(info_seite)
+        # Info-Seite (Index 1)
+        self._info_seite = InfoSeite()
+        self._content_stack.addWidget(self._info_seite)
 
         # Auftraege laden
         self._auftraege_seite.lade_auftraege()
@@ -568,6 +562,7 @@ class MainWindow(QMainWindow):
         )
         self._sidebar.aktualisiere_theme(self._ist_dark, self._aktuelle_farben)
         self._auftraege_seite.aktualisiere_theme(self._aktuelle_farben)
+        self._info_seite.aktualisiere_theme(self._aktuelle_farben)
         self._detail_temp.aktualisiere_theme(self._aktuelle_farben)
         self._detail_vde.aktualisiere_theme(self._aktuelle_farben)
         self._settings_overlay.aktualisiere_theme(self._aktuelle_farben, self._ist_dark)

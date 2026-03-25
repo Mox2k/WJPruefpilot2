@@ -14,8 +14,7 @@ def _lade_schriftart():
 
     fonts_pfad = os.path.join(basis, "assets", "fonts")
     for datei in ["Inter-Regular.ttf", "Inter-Medium.ttf",
-                   "Inter-SemiBold.ttf", "Inter-Bold.ttf",
-                   "PlusJakartaSans-SemiBold.ttf"]:
+                   "Inter-SemiBold.ttf", "Inter-Bold.ttf"]:
         pfad = os.path.join(fonts_pfad, datei)
         if os.path.exists(pfad):
             QFontDatabase.addApplicationFont(pfad)

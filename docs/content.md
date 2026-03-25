@@ -43,7 +43,7 @@
 - [x] Schnelle Animation: Fade+Slide (~150ms) via QParallelAnimationGroup
 
 #### 3.3 Detail-Seite Header
-- [x] Einheitlicher Titel im `seitenTitel`-Stil (Plus Jakarta Sans, rote Unterlinie): "WJ-Nummer · Hersteller · Modell"
+- [x] Einheitlicher Titel im `seitenTitel`-Stil (Inter SemiBold, rote Unterlinie): "WJ-Nummer · Hersteller · Modell"
 - [x] Tooltip bei Hover ueber Header: S/N, Hersteller, Standort, Raum, etc.
 
 #### 3.4 Temperaturjustage-Seite

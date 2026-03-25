@@ -56,7 +56,7 @@ docs/
   prime.md               # Session-Start-Anweisungen (via /prime Skill)
   design-guide.md        # UI Design Guide (Spacing, Typografie, Komponenten) -- bei Bedarf lesen
 assets/
-  fonts/                 # Inter + Plus Jakarta Sans Schriftarten
+  fonts/                 # Inter Schriftarten
   icons/                 # WJ-Logomark SVGs (Asset 9/10)
   images/                # Vollstaendige Logo SVGs
 ```

@@ -54,16 +54,15 @@ von Optionen (besonders in den Settings) genug Platz bleibt.
 
 ## 2. Typografie
 
-Primaerschrift: **Inter** (Regular, Medium, SemiBold, Bold)
-Akzentschrift: **Plus Jakarta Sans** (SemiBold) — nur fuer Titel
+Schriftart: **Inter** (Regular, Medium, SemiBold, Bold)
 
 ### Typografie-Skala (6 Stufen)
 
 | Stufe        | Groesse | Gewicht | Schriftart        | Verwendung                     |
 |--------------|---------|---------|-------------------|---------------------------------|
-| Seitentitel  | 22px    | 600     | Plus Jakarta Sans | Hauptseiten-Titel               |
-| Detail-Titel | 20px    | 600     | Plus Jakarta Sans | Detail-Seiten-Ueberschrift      |
-| Sektion      | 16px    | 600     | Plus Jakarta Sans | Settings-Titel, Dialog-Titel, Logo-Text |
+| Seitentitel  | 22px    | 600     | Inter             | Hauptseiten-Titel               |
+| Detail-Titel | 20px    | 600     | Inter             | Detail-Seiten-Ueberschrift      |
+| Sektion      | 16px    | 600     | Inter             | Settings-Titel, Dialog-Titel, Logo-Text |
 | Gruppe       | 14px    | 600     | Inter             | Formular-Gruppen, Gruppen-Titel |
 | Body/Input   | 13px    | 500     | Inter             | Eingabefelder, Buttons          |
 | Label        | 12px    | 500     | Inter             | Feldbezeichnungen, Sidebar, Header |
