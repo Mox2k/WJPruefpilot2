@@ -32,11 +32,14 @@ ui/
   title_bar.py           # Custom Title Bar (Toggle, Theme-Switch, Window Controls)
   sidebar.py             # Collapsible Sidebar (WJ-Logo, Navigation)
   auftraege_seite.py     # SimplyCal-Seite (DB-Dropdown, Auftrags-Dropdown, Waagentabelle, Icon-Buttons)
-  detail_temp_seite.py   # Temperaturjustage Detail-Seite (Formular, PDF im QThread, Spinner, Feedback)
-  detail_vde_seite.py    # VDE-Pruefung Detail-Seite mit 3-Seiten-Wizard
+  detail_basis.py        # Gemeinsame Basisklasse fuer Detail-Seiten (Validierung, Spinner, PDF-Feedback)
+  detail_temp_seite.py   # Temperaturjustage Detail-Seite (erbt von DetailBasis)
+  detail_vde_seite.py    # VDE-Pruefung Detail-Seite mit 3-Seiten-Wizard (erbt von DetailBasis)
   overlay_dialog.py      # Wiederverwendbare modale Dialog-Komponente (theme-konform, 4 Typen)
   settings_overlay.py    # Settings-Overlay (6 Reiter, Auto-Save, Bild-Upload, Messgeraete +/-)
   styles.py              # Zentrale Farben (FARBEN_DARK/FARBEN_LIGHT) + Stylesheet + Settings-Styles
+  widgets.py             # Wiederverwendbare Custom-Widgets (AnimatedButton mit Scale-Feedback)
+logger.py                # Logging-Helfer (setup_logger, log_info)
 pdf_base_generator.py    # Basisklasse fuer PDF-Generatoren (gemeinsame Methoden)
 pdf_temp_generator.py    # PDF-Generierung fuer Temperaturprotokolle (erbt von PDFGeneratorBase)
 pdf_vde_generator.py     # PDF-Generierung fuer VDE-Protokolle (erbt von PDFGeneratorBase)

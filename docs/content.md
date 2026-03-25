@@ -31,7 +31,7 @@
 
 #### 3.1 Tabelle umbauen
 - [x] Doppelklick-Funktion entfernen
-- [x] Status-Spalten durch klickbare Icon-Buttons ersetzen (Temp: `mdi6.thermometer-alert`/`mdi6.thermometer-check`, VDE: `mdi6.meter-electric-outline`/`mdi6.meter-electric`)
+- [x] Status-Spalten durch klickbare Icon-Buttons ersetzen (Temp: `ri.thermometer-line`/`ri.thermometer-fill`, VDE: `ri.flashlight-line`/`ri.flashlight-fill`)
 - [x] Buttons rot (offen) / gruen (erledigt), alle immer klickbar
 - [x] Klick auf Button oeffnet entsprechende Detail-Seite
 - [x] Waagen-Lookup via `_waagen_map` Dict statt QTableWidgetItem.setData (QVariant-Roundtrip-Bug vermieden)
@@ -52,7 +52,7 @@
 - [x] Soll/Ist-Temperaturpaare nebeneinander (Pruefpunkt 1: 100°C, Pruefpunkt 2: 160°C)
 - [x] Umgebungstemperatur (Standard: 22,0°C)
 - [x] Bemerkungen (optional)
-- [x] Unten: PDF-erstellen-Button (primaryButton, rot) mit `mdi6.printer-outline`-Icon
+- [x] Unten: PDF-erstellen-Button (primaryButton, rot) mit `ri.printer-line`-Icon
 - [x] Alle Felder vorausgefuellt: Soll 100/160, Ist 100/160, Umgebung 22,0, heutiges Datum, erstes Messgeraet
 - [x] Komma als Dezimaltrenner (deutsches Format), Punkt wird auch akzeptiert
 - [x] None-Werte aus DB werden vor PDF-Generierung bereinigt (tuple comprehension)
@@ -70,7 +70,7 @@
 - [x] Vorausgefuellt mit deutschen Standardwerten
 
 **Seite 2 -- Sichtpruefung:**
-- [x] 13 Pruefpunkte als Toggle-Switches (`mdi6.toggle-switch` gruen / `mdi6.toggle-switch-off-outline` rot)
+- [x] 13 Pruefpunkte als Toggle-Switches (`ri.checkbox-circle-line` gruen/rot)
 - [x] Alle standardmaessig auf bestanden (gruen)
 
 **Seite 3 -- Messwerte & Ergebnis:**
@@ -78,10 +78,10 @@
 - [x] Bemerkungsfeld pro Messwert
 - [x] Funktionspruefung (i.O. Toggle)
 - [x] Allgemeine Bemerkungen (optional)
-- [x] PDF-erstellen-Button mit `mdi6.printer-outline`, nur auf Seite 3 sichtbar
+- [x] PDF-erstellen-Button mit `ri.printer-line`, nur auf Seite 3 sichtbar
 
 #### 3.6 Info-Tooltips und Infoboxen
-- [x] Sichtbare Info-Icons (`mdi6.information-outline`) neben Feldern mit Tooltip
+- [x] Sichtbare Info-Icons (`ri.information-line`) neben Feldern mit Tooltip
 - [x] Einklappbare Infobox pro Wizard-Seite (allgemeine Erklaerung zum Schritt)
 - [x] Infobox-Stil: dezent, `info`-Farbe, mit Icon links, Chevron zum Einklappen
 
@@ -94,9 +94,9 @@
 
 #### 3.8 PDF-Generierung und Feedback
 - [x] Bei Klick auf PDF-Button: PDF generieren via PDFGeneratorTemp (im QThread, UI bleibt responsiv)
-- [x] Spinner-Animation auf dem Button waehrend der Generierung (mdi6.circle-slice-1..8, 50ms Rotation)
+- [x] Spinner-Animation auf dem Button waehrend der Generierung (ri.loader-5-line, Rotation)
 - [x] Ueberschreib-Dialog bei existierender Kalibrierscheinnummer (eigene Dialog-Komponente)
-- [x] Erfolgs-Feedback: gruenes `mdi6.file-document-check`-Icon erscheint neben PDF-Button
+- [x] Erfolgs-Feedback: gruenes `ri.file-text-line`-Icon erscheint neben PDF-Button
 - [x] Icon klickbar: oeffnet PDF im Standard-PDF-Viewer (os.startfile)
 - [x] Icon persistent: Dateisystem-Check via glob beim Oeffnen der Detail-Seite (nicht nur Session-Cache)
 - [x] Status-Button in Tabelle sofort aktualisieren (rot -> gruen, Kalibrierscheinnummer wird geparst)
