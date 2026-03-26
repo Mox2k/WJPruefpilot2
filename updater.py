@@ -219,27 +219,14 @@ def starte_update(download_pfad: str) -> bool:
     aktuelle_exe = sys.executable
     batch_pfad = os.path.join(tempfile.gettempdir(), "wjpruefpilot_update.bat")
 
-    exe_name = os.path.basename(aktuelle_exe)
-    exe_verzeichnis = os.path.dirname(aktuelle_exe)
-
     batch_inhalt = f"""@echo off
 setlocal
 set "UPDATE={download_pfad}"
 set "TARGET={aktuelle_exe}"
 set "BACKUP=%TARGET%.bak"
-set "EXE_NAME={exe_name}"
-set "EXE_DIR={exe_verzeichnis}"
 
-:: Warten bis der alte Prozess vollstaendig beendet ist
-:warte_prozess
-tasklist /FI "IMAGENAME eq %EXE_NAME%" 2>nul | find /I "%EXE_NAME%" >nul
-if %errorlevel% equ 0 (
-    timeout /t 1 /nobreak >nul
-    goto warte_prozess
-)
-
-:: Alte _MEI-Temp-Verzeichnisse aufraeumen
-for /d %%D in ("%TEMP%\\_MEI*") do rd /s /q "%%D" 2>nul
+:: Warten bis alter Prozess beendet und _MEI bereinigt ist
+ping -n 5 127.0.0.1 >nul
 
 :: Sicherungskopie erstellen
 copy /y "%TARGET%" "%BACKUP%" >nul 2>&1
@@ -251,7 +238,7 @@ set /a VERSUCH+=1
 move /y "%UPDATE%" "%TARGET%" >nul 2>&1
 if %errorlevel% neq 0 (
     if %VERSUCH% lss 3 (
-        timeout /t 2 /nobreak >nul
+        ping -n 3 127.0.0.1 >nul
         goto retry
     )
     echo Update fehlgeschlagen nach 3 Versuchen.
@@ -264,8 +251,11 @@ if %errorlevel% neq 0 (
 :: Backup loeschen (nicht mehr noetig)
 del "%BACKUP%" >nul 2>&1
 
+:: Warten bis Dateisystem bereit ist
+ping -n 4 127.0.0.1 >nul
+
 :: Neue Version starten
-start "" /D "%EXE_DIR%" "%TARGET%"
+start "" "%TARGET%"
 
 :end
 :: Batch loescht sich selbst
