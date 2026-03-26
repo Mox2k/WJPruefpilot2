@@ -6,7 +6,7 @@ abgerundeten Ecken und App-eigenen Buttons.
 
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QGraphicsOpacityEffect
+    QGraphicsOpacityEffect, QProgressBar
 )
 from PySide6.QtCore import Qt, Signal, QPropertyAnimation, QEasingCurve
 from PySide6.QtGui import QPainter, QColor
@@ -96,6 +96,16 @@ class OverlayDialog(QWidget):
         self._nachricht_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         box_layout.addWidget(self._nachricht_label)
 
+        # Fortschrittsbalken (nur im Fortschritts-Modus sichtbar)
+        self._fortschritt_bar = QProgressBar()
+        self._fortschritt_bar.setObjectName("dialogFortschritt")
+        self._fortschritt_bar.setFixedHeight(8)
+        self._fortschritt_bar.setRange(0, 100)
+        self._fortschritt_bar.setValue(0)
+        self._fortschritt_bar.setTextVisible(False)
+        self._fortschritt_bar.hide()
+        box_layout.addWidget(self._fortschritt_bar)
+
         box_layout.addStretch()
 
         # Buttons
@@ -141,6 +151,10 @@ class OverlayDialog(QWidget):
         self._bei_bestaetigung = bei_bestaetigung
         self._bei_ablehnung = bei_ablehnung
 
+        # Fortschrittsbalken ausblenden (Normalzustand)
+        self._fortschritt_bar.hide()
+        self._fortschritt_bar.setValue(0)
+
         # Inhalt setzen
         config = self.TYP_CONFIG.get(typ, self.TYP_CONFIG["info"])
         icon_farbe = self._farben.get(config["farb_key"], "#42a5f5")
@@ -154,7 +168,9 @@ class OverlayDialog(QWidget):
 
         # Buttons konfigurieren
         ist_bestaetigung = (typ == "bestaetigung")
-        self._btn_abbrechen.setVisible(ist_bestaetigung)
+        zeige_abbrechen = ist_bestaetigung or abbrechen_text is not None
+        self._btn_abbrechen.setVisible(zeige_abbrechen)
+        self._btn_ok.setVisible(True)
 
         if ok_text:
             self._btn_ok.setText(ok_text)
@@ -163,6 +179,8 @@ class OverlayDialog(QWidget):
 
         if abbrechen_text:
             self._btn_abbrechen.setText(abbrechen_text)
+        elif ist_bestaetigung:
+            self._btn_abbrechen.setText("Abbrechen")
 
         # Groesse und Position
         if self.parent():
@@ -171,6 +189,44 @@ class OverlayDialog(QWidget):
         self.show()
         self.raise_()
         self._animiere_einblenden()
+
+    def zeige_fortschritt(self, titel="", nachricht="", bei_abbruch=None):
+        """Zeigt den Dialog im Fortschritts-Modus mit ProgressBar.
+
+        Args:
+            titel: Dialog-Titel (z.B. "Update wird heruntergeladen...")
+            nachricht: Zusatzinfo (z.B. "Version 2.1.0")
+            bei_abbruch: Callback wenn Abbrechen geklickt wird
+        """
+        self._bei_bestaetigung = None
+        self._bei_ablehnung = bei_abbruch
+
+        # Icon setzen
+        icon_farbe = self._farben.get("info", "#42a5f5")
+        icon = qta.icon("ri.download-line", color=icon_farbe)
+        self._icon_label.setPixmap(icon.pixmap(24, 24))
+
+        self._titel_label.setText(titel)
+        self._nachricht_label.setText(nachricht)
+
+        # Fortschrittsbalken anzeigen, OK-Button verstecken
+        self._fortschritt_bar.setValue(0)
+        self._fortschritt_bar.show()
+        self._btn_ok.setVisible(False)
+        self._btn_abbrechen.setVisible(True)
+        self._btn_abbrechen.setText("Abbrechen")
+
+        # Groesse und Position
+        if self.parent():
+            self.setGeometry(self.parent().rect())
+
+        self.show()
+        self.raise_()
+        self._animiere_einblenden()
+
+    def setze_fortschritt(self, prozent: int):
+        """Aktualisiert den Fortschrittsbalken (0-100)."""
+        self._fortschritt_bar.setValue(min(prozent, 100))
 
     def schliesse(self):
         """Schliesst den Dialog."""
@@ -222,6 +278,10 @@ class OverlayDialog(QWidget):
         """Klick ausserhalb der Dialog-Box schliesst den Dialog."""
         dialog_rect = self._dialog_box.geometry()
         if not dialog_rect.contains(event.pos()):
+            # Im Fortschrittsmodus: Klick ausserhalb ignorieren
+            if self._fortschritt_bar.isVisible():
+                event.accept()
+                return
             if self._btn_abbrechen.isVisible():
                 # Bestaetigungs-Dialog: Klick ausserhalb = Abbrechen
                 self._ablehnen()
@@ -233,9 +293,13 @@ class OverlayDialog(QWidget):
     def keyPressEvent(self, event):
         """Escape schliesst den Dialog."""
         if event.key() == Qt.Key_Escape:
-            if self._btn_abbrechen.isVisible():
+            if self._fortschritt_bar.isVisible():
+                # Fortschrittsmodus: Escape = Abbrechen
+                self._ablehnen()
+            elif self._btn_abbrechen.isVisible():
                 self._ablehnen()
             else:
                 self._bestaetigen()
         elif event.key() in (Qt.Key_Return, Qt.Key_Enter):
-            self._bestaetigen()
+            if not self._fortschritt_bar.isVisible():
+                self._bestaetigen()

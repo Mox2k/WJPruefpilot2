@@ -855,6 +855,19 @@ class SettingsOverlay(QWidget):
 
         layout.addLayout(ib_grid)
 
+        layout.addWidget(self._trennlinie())
+
+        # --- Updates ---
+        layout.addWidget(self._section_titel("Updates"))
+
+        self._auto_update_btn = QPushButton("  Automatisch nach Updates suchen")
+        self._auto_update_btn.setObjectName("infoboxToggle")
+        self._auto_update_btn.setCursor(Qt.PointingHandCursor)
+        self._auto_update_btn.setFixedHeight(32)
+        self._auto_update_btn.setProperty("bestanden", self._settings.get_auto_update())
+        self._auto_update_btn.clicked.connect(self._toggle_auto_update)
+        layout.addWidget(self._auto_update_btn)
+
         layout.addStretch()
 
     # --- Auto-Save ---
@@ -872,18 +885,30 @@ class SettingsOverlay(QWidget):
         self._aktualisiere_infobox_toggle_styles()
         self.settings_geaendert.emit()
 
+    def _toggle_auto_update(self):
+        """Schaltet die automatische Update-Pruefung um."""
+        aktuell = self._auto_update_btn.property("bestanden")
+        self._auto_update_btn.setProperty("bestanden", not aktuell)
+        self._settings.set_auto_update(not aktuell)
+        self._aktualisiere_toggle_btn_style(self._auto_update_btn)
+        self.settings_geaendert.emit()
+
+    def _aktualisiere_toggle_btn_style(self, btn):
+        """Aktualisiert Icon eines einzelnen Toggle-Buttons."""
+        bestanden = btn.property("bestanden")
+        if bestanden:
+            farbe = self._aktuelle_farben.get("erfolg", "#4caf50")
+            btn.setIcon(qta.icon("ri.toggle-fill", color=farbe))
+        else:
+            farbe = self._aktuelle_farben.get("fehler", "#f44336")
+            btn.setIcon(qta.icon("ri.toggle-line", color=farbe))
+        btn.setIconSize(QSize(22, 22))
+
     def _aktualisiere_infobox_toggle_styles(self):
         """Aktualisiert die Icons und Textfarbe aller Infobox-Toggles."""
-        text_farbe = self._aktuelle_farben.get("text_primaer", "#e0e0e0")
         for key, btn in self._infobox_toggles.items():
-            bestanden = btn.property("bestanden")
-            if bestanden:
-                farbe = self._aktuelle_farben.get("erfolg", "#4caf50")
-                btn.setIcon(qta.icon("ri.checkbox-circle-line", color=farbe))
-            else:
-                farbe = self._aktuelle_farben.get("fehler", "#f44336")
-                btn.setIcon(qta.icon("ri.close-circle-line", color=farbe))
-            btn.setIconSize(QSize(22, 22))
+            self._aktualisiere_toggle_btn_style(btn)
+        self._aktualisiere_toggle_btn_style(self._auto_update_btn)
 
     # --- Oeffentliche Methoden ---
 
@@ -915,6 +940,7 @@ class SettingsOverlay(QWidget):
         self._std_ib.setText(self._settings.get_standard_ib())
         for key, btn in self._infobox_toggles.items():
             btn.setProperty("bestanden", self._settings.get_infobox_anzeigen(key))
+        self._auto_update_btn.setProperty("bestanden", self._settings.get_auto_update())
         self._aktualisiere_infobox_toggle_styles()
 
         # Immer beim ersten Tab starten

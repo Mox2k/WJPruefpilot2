@@ -209,19 +209,19 @@
 - [x] Automatisches GitHub Release mit `.exe` als Asset
 
 #### 6.6 Auto-Updater — Spec §5
-- [ ] `updater.py` — GitHub API Check im Hintergrund-Thread
-- [ ] Versionsvergleich (tag_name vs. lokale `__version__`)
-- [ ] Download mit Fortschrittsbalken (abbrechbar) + Dateigroessen-Check
-- [ ] Self-Replace via Batch-Helper (`.exe.bak`-Sicherung, Retry-Logik)
+- [x] `updater.py` — GitHub API Check im Hintergrund-Thread
+- [x] Versionsvergleich (tag_name vs. lokale `__version__`)
+- [x] Download mit Fortschrittsbalken (abbrechbar) + Dateigroessen-Check
+- [x] Self-Replace via Batch-Helper (`.exe.bak`-Sicherung, Retry-Logik)
 
 #### 6.7 Update-Dialog — Spec §5 (Update-Dialog / Fortschritts-Anzeige)
-- [ ] "Neue Version verfuegbar"-Dialog (OverlayDialog)
-- [ ] Fortschrittsanzeige waehrend Download
-- [ ] "Spaeter" / "Jetzt updaten" / "Abbrechen"
-- [ ] Stilles Ignorieren bei Offline/Fehler
+- [x] "Neue Version verfuegbar"-Dialog (OverlayDialog)
+- [x] Fortschrittsanzeige waehrend Download
+- [x] "Spaeter" / "Jetzt updaten" / "Abbrechen"
+- [x] Stilles Ignorieren bei Offline/Fehler
 
 #### 6.8 Settings-Integration & Info-Seite — Spec §1 + §5 (Konfiguration)
-- [ ] Toggle "Automatisch nach Updates suchen" im System-Tab
+- [x] Toggle "Automatisch nach Updates suchen" im System-Tab
 - [x] Info-Seite: `VERSION`-Konstante entfernt, nutzt `from version import __version__` (in 6.1 erledigt)
 
 #### 6.9 Manueller Testlauf (Update-Simulation) — Spec §7

@@ -36,6 +36,9 @@ docs/specs/
 # Claude Code
 .claude/settings.local.json
 
+# Testscripts
+test_*.py
+
 # Misc
 *.log
 .DS_Store

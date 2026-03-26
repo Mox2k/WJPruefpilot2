@@ -34,6 +34,10 @@ FARBEN_DARK = {
     "fehler": "#f44336",
     "info": "#42a5f5",
 
+    # Scrollbar
+    "scrollbar_handle": "rgba(200, 200, 220, 60)",
+    "scrollbar_handle_hover": "rgba(200, 200, 220, 120)",
+
     # Sidebar Active-Indicator
     "indicator": "#ed1b24",
 }
@@ -65,6 +69,10 @@ FARBEN_LIGHT = {
     "warnung": "#f57c00",
     "fehler": "#d32f2f",
     "info": "#1976d2",
+
+    # Scrollbar
+    "scrollbar_handle": "rgba(100, 100, 110, 60)",
+    "scrollbar_handle_hover": "rgba(100, 100, 110, 130)",
 
     # Sidebar Active-Indicator
     "indicator": "#ed1b24",
@@ -634,6 +642,17 @@ def generiere_stylesheet(farben: dict) -> str:
         background: transparent;
     }}
 
+    QProgressBar#dialogFortschritt {{
+        background-color: {farben["border"]};
+        border: none;
+        border-radius: 4px;
+        max-height: 8px;
+    }}
+    QProgressBar#dialogFortschritt::chunk {{
+        background-color: {farben["info"]};
+        border-radius: 4px;
+    }}
+
     /* Scrollbereiche transparent */
     QScrollArea#detailScroll {{
         background: transparent;
@@ -642,17 +661,46 @@ def generiere_stylesheet(farben: dict) -> str:
     QScrollArea#detailScroll > QWidget {{
         background: transparent;
     }}
+    /* Scrollbar vertikal */
     QScrollBar:vertical {{
-        width: 6px;
+        width: 12px;
+        margin: 4px 2px;
         background: transparent;
     }}
     QScrollBar::handle:vertical {{
-        background: rgba(128, 128, 128, 60);
-        border-radius: 3px;
-        min-height: 30px;
+        background: {farben["scrollbar_handle"]};
+        border-radius: 6px;
+        min-height: 40px;
+    }}
+    QScrollBar::handle:vertical:hover {{
+        background: {farben["scrollbar_handle_hover"]};
     }}
     QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{
         height: 0px;
+    }}
+    QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {{
+        background: transparent;
+    }}
+
+    /* Scrollbar horizontal */
+    QScrollBar:horizontal {{
+        height: 12px;
+        margin: 2px 4px;
+        background: transparent;
+    }}
+    QScrollBar::handle:horizontal {{
+        background: {farben["scrollbar_handle"]};
+        border-radius: 6px;
+        min-width: 40px;
+    }}
+    QScrollBar::handle:horizontal:hover {{
+        background: {farben["scrollbar_handle_hover"]};
+    }}
+    QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {{
+        width: 0px;
+    }}
+    QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {{
+        background: transparent;
     }}
 
     /* Tooltips */

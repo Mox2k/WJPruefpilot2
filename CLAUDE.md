@@ -50,6 +50,7 @@ templates/               # HTML-Templates fuer PDF-Generierung (string.Template 
 settings.py              # Settings-Klasse (liest/schreibt settings.ini)
 external_db.py           # Read-only Zugriff auf SimplyCal-SQLite-Datenbank
 internal_db.py           # Interne DB (Platzhalter fuer zukuenftige Features)
+updater.py               # Auto-Updater (GitHub API Check, Download, Batch-Self-Replace)
 hook-combined.py         # PyInstaller Hook fuer hidden imports + Template-Dateien
 settings.ini             # Konfigurationsdatei (wird zur Laufzeit erzeugt/gelesen)
 docs/

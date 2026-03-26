@@ -339,6 +339,16 @@ class Settings:
     def set_standard_ib(self, wert):
         self.set_setting('SYSTEM', 'ib', wert)
 
+    # --- Auto-Update ---
+
+    def get_auto_update(self):
+        """Ob automatisch nach Updates gesucht werden soll (Default: True)."""
+        return self.get_setting('SYSTEM', 'auto_update', '1') == '1'
+
+    def set_auto_update(self, aktiv):
+        """Aktiviert oder deaktiviert die automatische Update-Pruefung."""
+        self.set_setting('SYSTEM', 'auto_update', '1' if aktiv else '0')
+
     def get_infobox_anzeigen(self, key):
         """Ob eine spezifische Infobox angezeigt werden soll."""
         return self.get_setting('INFOBOXEN', key, '1') == '1'

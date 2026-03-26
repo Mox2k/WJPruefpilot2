@@ -24,6 +24,7 @@ from ui.overlay_dialog import OverlayDialog
 from ui.settings_overlay import SettingsOverlay
 from ui.styles import FARBEN_DARK, FARBEN_LIGHT, generiere_stylesheet
 from settings import Settings
+from updater import UpdatePruefThread, DownloadThread, starte_update
 
 
 # Windows Konstanten
@@ -135,6 +136,10 @@ class MainWindow(QMainWindow):
 
         # Windows-Fensterstile setzen fuer Resize und Snap
         self._setze_win32_styles()
+
+        # Auto-Update Check im Hintergrund
+        self._download_thread = None
+        self._starte_update_pruefung()
 
     def _setze_win32_styles(self):
         """Setzt Win32-Fensterstile fuer native Resize-Raender und Snap."""
@@ -567,6 +572,82 @@ class MainWindow(QMainWindow):
         self._detail_vde.aktualisiere_theme(self._aktuelle_farben)
         self._settings_overlay.aktualisiere_theme(self._aktuelle_farben, self._ist_dark)
         self._dialog.setze_farben(self._aktuelle_farben)
+
+    # --- Auto-Update ---
+
+    def _starte_update_pruefung(self):
+        """Startet den Update-Check im Hintergrund (wenn in Settings aktiviert)."""
+        if not self._app_settings.get_auto_update():
+            return
+
+        self._update_thread = UpdatePruefThread()
+        self._update_thread.neue_version_gefunden.connect(self._zeige_update_dialog)
+        # Fehlschlag wird still ignoriert (kein Dialog)
+        self._update_thread.start()
+
+    def _zeige_update_dialog(self, neue_version, download_url, release_name, dateigroesse):
+        """Zeigt den 'Neue Version verfuegbar'-Dialog."""
+        from version import __version__
+
+        self._update_url = download_url
+        self._update_dateigroesse = dateigroesse
+        self._update_version = neue_version
+
+        self._dialog.zeige(
+            typ="info",
+            titel=f"Neue Version verfügbar",
+            nachricht=f"Version {neue_version} ist verfügbar.\n(Aktuell: {__version__})",
+            ok_text="Jetzt updaten",
+            abbrechen_text="Später",
+            bei_bestaetigung=self._starte_download,
+            bei_ablehnung=None,
+        )
+
+    def _starte_download(self):
+        """Startet den Download der neuen Version mit Fortschrittsanzeige."""
+        self._dialog.zeige_fortschritt(
+            titel="Update wird heruntergeladen…",
+            nachricht=f"Version {self._update_version}",
+            bei_abbruch=self._download_abbrechen,
+        )
+
+        self._download_thread = DownloadThread(
+            self._update_url, self._update_dateigroesse
+        )
+        self._download_thread.fortschritt.connect(self._dialog.setze_fortschritt)
+        self._download_thread.abgeschlossen.connect(self._download_fertig)
+        self._download_thread.fehler.connect(self._download_fehler)
+        self._download_thread.start()
+
+    def _download_abbrechen(self):
+        """Bricht den laufenden Download ab."""
+        if self._download_thread and self._download_thread.isRunning():
+            self._download_thread.abbrechen()
+
+    def _download_fertig(self, pfad):
+        """Download abgeschlossen — Self-Replace starten und App beenden."""
+        self._dialog.schliesse()
+
+        if starte_update(pfad):
+            # App beenden, Batch-Script uebernimmt
+            QApplication.instance().quit()
+        else:
+            # Self-Replace fehlgeschlagen (z.B. nicht im frozen-Modus)
+            self._dialog.zeige(
+                typ="info",
+                titel="Update heruntergeladen",
+                nachricht=f"Die neue Version wurde gespeichert:\n{pfad}\n\n"
+                          "Automatische Installation ist nur in der\n"
+                          "gepackten .exe verfügbar.",
+            )
+
+    def _download_fehler(self, fehlermeldung):
+        """Zeigt eine Fehlermeldung wenn der Download fehlschlaegt."""
+        self._dialog.zeige(
+            typ="fehler",
+            titel="Update fehlgeschlagen",
+            nachricht=fehlermeldung,
+        )
 
     # --- Fenster ---
 
