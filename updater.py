@@ -219,60 +219,89 @@ def starte_update(download_pfad: str) -> bool:
     aktuelle_exe = sys.executable
     exe_name = os.path.basename(aktuelle_exe)
     batch_pfad = os.path.join(tempfile.gettempdir(), "wjpruefpilot_update.bat")
+    log_pfad = os.path.join(tempfile.gettempdir(), "wjpruefpilot_update.log")
 
     batch_inhalt = f"""@echo off
 setlocal
 set "UPDATE={download_pfad}"
 set "TARGET={aktuelle_exe}"
 set "BACKUP=%TARGET%.bak"
+set "BAKNAME={exe_name}.bak"
 set "EXENAME={exe_name}"
+set "LOG={log_pfad}"
+
+echo [%date% %time%] Update-Batch gestartet > "%LOG%"
+echo UPDATE=%UPDATE% >> "%LOG%"
+echo TARGET=%TARGET% >> "%LOG%"
+echo EXENAME=%EXENAME% >> "%LOG%"
+
+:: Pruefen ob Update-Datei existiert
+if not exist "%UPDATE%" (
+    echo [%date% %time%] FEHLER: Update-Datei nicht gefunden: %UPDATE% >> "%LOG%"
+    goto cleanup
+)
+echo [%date% %time%] Update-Datei gefunden >> "%LOG%"
 
 :: Warten bis alter Prozess beendet ist (max 30 Sekunden)
 set WARTEN=0
 :wait
-tasklist /FI "IMAGENAME eq %EXENAME%" 2>nul | find /i "%EXENAME%" >nul
+ping -n 3 127.0.0.1 >nul
+set /a WARTEN+=1
+echo [%date% %time%] Warte auf Prozess-Ende (Versuch %WARTEN%/15) >> "%LOG%"
+tasklist /FI "IMAGENAME eq %EXENAME%" /NH 2>nul > "%TEMP%\wjpruefpilot_tl.tmp"
+findstr /i "%EXENAME%" "%TEMP%\wjpruefpilot_tl.tmp" >nul 2>&1
 if %errorlevel% equ 0 (
-    set /a WARTEN+=1
     if %WARTEN% geq 15 (
-        echo Prozess laeuft noch nach 30 Sekunden, breche ab.
+        echo [%date% %time%] FEHLER: Prozess laeuft noch nach 30 Sekunden >> "%LOG%"
+        del "%TEMP%\wjpruefpilot_tl.tmp" >nul 2>&1
         goto cleanup
     )
-    ping -n 3 127.0.0.1 >nul
     goto wait
 )
+del "%TEMP%\wjpruefpilot_tl.tmp" >nul 2>&1
+echo [%date% %time%] Prozess beendet >> "%LOG%"
 
 :: Alte .bak aufraeumen (falls von vorherigem Update uebrig)
-if exist "%BACKUP%" del "%BACKUP%" >nul 2>&1
-
-:: Sicherungskopie erstellen und pruefen
-copy /y "%TARGET%" "%BACKUP%" >nul 2>&1
-if not exist "%BACKUP%" (
-    echo Backup konnte nicht erstellt werden, breche ab.
-    goto cleanup
+if exist "%BACKUP%" (
+    echo [%date% %time%] Alte .bak gefunden, loesche >> "%LOG%"
+    del "%BACKUP%" >nul 2>&1
 )
 
-:: Ersetzen mit Retry (10 Versuche a 2 Sekunden, falls .exe noch gesperrt)
+:: Alte .exe per Rename wegbewegen (funktioniert auch bei gesperrtem File-Handle)
+:: Windows erlaubt Rename auf gesperrte Dateien, aber kein Ueberschreiben
 set VERSUCH=0
-:retry
+:rename_retry
 set /a VERSUCH+=1
-move /y "%UPDATE%" "%TARGET%" >nul 2>&1
-if %errorlevel% neq 0 (
+echo [%date% %time%] Rename-Versuch %VERSUCH%/10 >> "%LOG%"
+ren "%TARGET%" "%BAKNAME%" >nul 2>&1
+if exist "%TARGET%" (
+    echo [%date% %time%] Rename fehlgeschlagen >> "%LOG%"
     if %VERSUCH% lss 10 (
         ping -n 3 127.0.0.1 >nul
-        goto retry
+        goto rename_retry
     )
-    echo Update fehlgeschlagen nach 10 Versuchen.
-    :: Backup wiederherstellen
-    move /y "%BACKUP%" "%TARGET%" >nul 2>&1
+    echo [%date% %time%] FEHLER: Rename fehlgeschlagen nach 10 Versuchen >> "%LOG%"
+    goto cleanup
+)
+echo [%date% %time%] Rename erfolgreich, Ziel frei >> "%LOG%"
+
+:: Neue .exe an den freien Platz verschieben
+move /y "%UPDATE%" "%TARGET%" >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [%date% %time%] FEHLER: Move der neuen Datei fehlgeschlagen >> "%LOG%"
+    :: Backup zurueckbenennen
+    ren "%BACKUP%" "%EXENAME%" >nul 2>&1
     goto cleanup
 )
 
-:: Backup loeschen (Update erfolgreich)
+echo [%date% %time%] ERFOLG: Update ersetzt >> "%LOG%"
+:: Backup loeschen
 del "%BACKUP%" >nul 2>&1
 
 :cleanup
 :: Update-Datei aufraeumen falls noch vorhanden
 if exist "%UPDATE%" del "%UPDATE%" >nul 2>&1
+echo [%date% %time%] Batch beendet >> "%LOG%"
 :: Batch loescht sich selbst
 del "%~f0"
 """

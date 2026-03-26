@@ -226,12 +226,13 @@
 - [x] Info-Seite: `VERSION`-Konstante entfernt, nutzt `from version import __version__` (in 6.1 erledigt)
 
 #### 6.9 Manueller Testlauf (Update-Simulation) — Spec §7
-- [ ] Lokaler PyInstaller-Build mit v2.0.0, Settings-Migration pruefen
-- [ ] Test-Release v2.0.1-test auf GitHub (via Tag-Push)
-- [ ] Update-Dialog, Download, Fortschritt, Batch-Replace durchspielen
-- [ ] Fehlerfaelle: Offline, Abbrechen, Toggle deaktiviert
-- [ ] Test-Tag und Pre-Release aufraeumen
+- [x] Lokaler PyInstaller-Build, Settings in %APPDATA% pruefen
+- [x] Test-Releases auf GitHub (via Tag-Push), Build-Pipeline validiert
+- [x] Update-Dialog, Download, Fortschritt, Batch-Replace durchgespielt
+- [x] Fehlerfaelle: Offline (still ignoriert), Abbrechen (App laeuft weiter), Toggle deaktiviert (kein API-Call)
+- [x] Batch-Replace sporadisch unzuverlaessig: geloest durch Rename-Strategie statt Ueberschreiben (Windows erlaubt Rename auf gesperrte Dateien)
+- [x] Test-Tags und Pre-Releases aufraeumen
 
 #### 6.10 Erstes Release
-- [ ] Tag `v2.0.0` setzen und pushen
+- [x] Tag `v2.0.0` setzen und pushen
 
