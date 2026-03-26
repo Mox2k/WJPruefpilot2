@@ -158,13 +158,14 @@ class DetailTempSeite(DetailBasis):
         self._messgeraet_dropdown.setObjectName("formDropdown")
         self._messgeraet_dropdown.setMinimumWidth(300)
         self._messgeraet_dropdown.setFixedHeight(36)
-        self._lade_messgeraete()
         mg_box.addWidget(self._messgeraet_dropdown)
 
         self._messgeraet_fehler = QLabel("")
         self._messgeraet_fehler.setObjectName("formFehler")
         self._messgeraet_fehler.setVisible(False)
         mg_box.addWidget(self._messgeraet_fehler)
+
+        self._lade_messgeraete()
 
         zeile1.addLayout(mg_box)
 

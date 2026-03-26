@@ -280,13 +280,14 @@ class DetailVDESeite(DetailBasis):
         self._messgeraet_dropdown.setObjectName("formDropdown")
         self._messgeraet_dropdown.setMinimumWidth(120)
         self._messgeraet_dropdown.setFixedHeight(36)
-        self._lade_messgeraete()
         mg_box.addWidget(self._messgeraet_dropdown)
 
         self._messgeraet_fehler = QLabel("")
         self._messgeraet_fehler.setObjectName("formFehler")
         self._messgeraet_fehler.setVisible(False)
         mg_box.addWidget(self._messgeraet_fehler)
+
+        self._lade_messgeraete()
         mg_datum_zeile.addLayout(mg_box)
 
         datum_box = QVBoxLayout()
