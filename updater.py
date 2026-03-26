@@ -219,13 +219,27 @@ def starte_update(download_pfad: str) -> bool:
     aktuelle_exe = sys.executable
     batch_pfad = os.path.join(tempfile.gettempdir(), "wjpruefpilot_update.bat")
 
+    exe_name = os.path.basename(aktuelle_exe)
+    exe_verzeichnis = os.path.dirname(aktuelle_exe)
+
     batch_inhalt = f"""@echo off
 setlocal
 set "UPDATE={download_pfad}"
 set "TARGET={aktuelle_exe}"
 set "BACKUP=%TARGET%.bak"
+set "EXE_NAME={exe_name}"
+set "EXE_DIR={exe_verzeichnis}"
 
-timeout /t 3 /nobreak >nul
+:: Warten bis der alte Prozess vollstaendig beendet ist
+:warte_prozess
+tasklist /FI "IMAGENAME eq %EXE_NAME%" 2>nul | find /I "%EXE_NAME%" >nul
+if %errorlevel% equ 0 (
+    timeout /t 1 /nobreak >nul
+    goto warte_prozess
+)
+
+:: Alte _MEI-Temp-Verzeichnisse aufraeumen
+for /d %%D in ("%TEMP%\\_MEI*") do rd /s /q "%%D" 2>nul
 
 :: Sicherungskopie erstellen
 copy /y "%TARGET%" "%BACKUP%" >nul 2>&1
@@ -250,11 +264,8 @@ if %errorlevel% neq 0 (
 :: Backup loeschen (nicht mehr noetig)
 del "%BACKUP%" >nul 2>&1
 
-:: Warten bis alte _MEI-Temp-Verzeichnisse bereinigt sind
-timeout /t 2 /nobreak >nul
-
 :: Neue Version starten
-start "" "%TARGET%"
+start "" /D "%EXE_DIR%" "%TARGET%"
 
 :end
 :: Batch loescht sich selbst
