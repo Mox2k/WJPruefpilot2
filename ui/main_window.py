@@ -625,17 +625,17 @@ class MainWindow(QMainWindow):
             self._download_thread.abbrechen()
 
     def _download_fertig(self, pfad):
-        """Download abgeschlossen — Self-Replace starten und App beenden."""
+        """Download abgeschlossen — Dialog zeigen, dann Self-Replace starten."""
         self._dialog.schliesse()
+        self._update_download_pfad = pfad
 
-        if starte_update(pfad):
-            # Hinweis zeigen, dann App beenden
+        if getattr(sys, 'frozen', False):
             self._dialog.zeige(
                 typ="info",
                 titel="Update installiert",
                 nachricht=f"Version {self._update_version} wurde installiert.\n"
                           "Die App wird jetzt beendet — bitte neu starten.",
-                bei_bestaetigung=lambda: QApplication.instance().quit(),
+                bei_bestaetigung=self._update_anwenden,
             )
         else:
             # Self-Replace fehlgeschlagen (z.B. nicht im frozen-Modus)
@@ -646,6 +646,11 @@ class MainWindow(QMainWindow):
                           "Automatische Installation ist nur in der\n"
                           "gepackten .exe verfügbar.",
             )
+
+    def _update_anwenden(self):
+        """Startet den Batch-Replace und beendet die App."""
+        starte_update(self._update_download_pfad)
+        QApplication.instance().quit()
 
     def _download_fehler(self, fehlermeldung):
         """Zeigt eine Fehlermeldung wenn der Download fehlschlaegt."""
