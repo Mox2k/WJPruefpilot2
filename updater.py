@@ -225,7 +225,7 @@ set "UPDATE={download_pfad}"
 set "TARGET={aktuelle_exe}"
 set "BACKUP=%TARGET%.bak"
 
-timeout /t 1 /nobreak >nul
+timeout /t 3 /nobreak >nul
 
 :: Sicherungskopie erstellen
 copy /y "%TARGET%" "%BACKUP%" >nul 2>&1
@@ -249,6 +249,9 @@ if %errorlevel% neq 0 (
 
 :: Backup loeschen (nicht mehr noetig)
 del "%BACKUP%" >nul 2>&1
+
+:: Warten bis alte _MEI-Temp-Verzeichnisse bereinigt sind
+timeout /t 2 /nobreak >nul
 
 :: Neue Version starten
 start "" "%TARGET%"
