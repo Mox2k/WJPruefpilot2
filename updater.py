@@ -217,6 +217,7 @@ def starte_update(download_pfad: str) -> bool:
         return False
 
     aktuelle_exe = sys.executable
+    exe_name = os.path.basename(aktuelle_exe)
     batch_pfad = os.path.join(tempfile.gettempdir(), "wjpruefpilot_update.bat")
 
     batch_inhalt = f"""@echo off
@@ -224,34 +225,54 @@ setlocal
 set "UPDATE={download_pfad}"
 set "TARGET={aktuelle_exe}"
 set "BACKUP=%TARGET%.bak"
+set "EXENAME={exe_name}"
 
-:: Warten bis alter Prozess beendet ist
-ping -n 5 127.0.0.1 >nul
+:: Warten bis alter Prozess beendet ist (max 30 Sekunden)
+set WARTEN=0
+:wait
+tasklist /FI "IMAGENAME eq %EXENAME%" 2>nul | find /i "%EXENAME%" >nul
+if %errorlevel% equ 0 (
+    set /a WARTEN+=1
+    if %WARTEN% geq 15 (
+        echo Prozess laeuft noch nach 30 Sekunden, breche ab.
+        goto cleanup
+    )
+    ping -n 3 127.0.0.1 >nul
+    goto wait
+)
 
-:: Sicherungskopie erstellen
+:: Alte .bak aufraeumen (falls von vorherigem Update uebrig)
+if exist "%BACKUP%" del "%BACKUP%" >nul 2>&1
+
+:: Sicherungskopie erstellen und pruefen
 copy /y "%TARGET%" "%BACKUP%" >nul 2>&1
+if not exist "%BACKUP%" (
+    echo Backup konnte nicht erstellt werden, breche ab.
+    goto cleanup
+)
 
-:: Ersetzen mit Retry (3 Versuche, falls .exe noch gesperrt)
+:: Ersetzen mit Retry (10 Versuche a 2 Sekunden, falls .exe noch gesperrt)
 set VERSUCH=0
 :retry
 set /a VERSUCH+=1
 move /y "%UPDATE%" "%TARGET%" >nul 2>&1
 if %errorlevel% neq 0 (
-    if %VERSUCH% lss 3 (
+    if %VERSUCH% lss 10 (
         ping -n 3 127.0.0.1 >nul
         goto retry
     )
-    echo Update fehlgeschlagen nach 3 Versuchen.
+    echo Update fehlgeschlagen nach 10 Versuchen.
     :: Backup wiederherstellen
     move /y "%BACKUP%" "%TARGET%" >nul 2>&1
-    pause
-    goto end
+    goto cleanup
 )
 
-:: Backup loeschen (nicht mehr noetig)
+:: Backup loeschen (Update erfolgreich)
 del "%BACKUP%" >nul 2>&1
 
-:end
+:cleanup
+:: Update-Datei aufraeumen falls noch vorhanden
+if exist "%UPDATE%" del "%UPDATE%" >nul 2>&1
 :: Batch loescht sich selbst
 del "%~f0"
 """
