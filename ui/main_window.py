@@ -629,8 +629,14 @@ class MainWindow(QMainWindow):
         self._dialog.schliesse()
 
         if starte_update(pfad):
-            # App beenden, Batch-Script uebernimmt
-            QApplication.instance().quit()
+            # Hinweis zeigen, dann App beenden
+            self._dialog.zeige(
+                typ="info",
+                titel="Update installiert",
+                nachricht=f"Version {self._update_version} wurde installiert.\n"
+                          "Die App wird jetzt beendet — bitte neu starten.",
+                bei_bestaetigung=lambda: QApplication.instance().quit(),
+            )
         else:
             # Self-Replace fehlgeschlagen (z.B. nicht im frozen-Modus)
             self._dialog.zeige(

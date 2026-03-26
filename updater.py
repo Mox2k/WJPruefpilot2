@@ -225,7 +225,7 @@ set "UPDATE={download_pfad}"
 set "TARGET={aktuelle_exe}"
 set "BACKUP=%TARGET%.bak"
 
-:: Warten bis alter Prozess beendet und _MEI bereinigt ist
+:: Warten bis alter Prozess beendet ist
 ping -n 5 127.0.0.1 >nul
 
 :: Sicherungskopie erstellen
@@ -250,12 +250,6 @@ if %errorlevel% neq 0 (
 
 :: Backup loeschen (nicht mehr noetig)
 del "%BACKUP%" >nul 2>&1
-
-:: Warten bis Dateisystem bereit ist
-ping -n 4 127.0.0.1 >nul
-
-:: Neue Version starten
-start "" "%TARGET%"
 
 :end
 :: Batch loescht sich selbst

@@ -219,6 +219,7 @@
 - [x] Fortschrittsanzeige waehrend Download
 - [x] "Spaeter" / "Jetzt updaten" / "Abbrechen"
 - [x] Stilles Ignorieren bei Offline/Fehler
+- [x] Nach Replace: "Update installiert, bitte neu starten" + App beenden (kein Auto-Restart)
 
 #### 6.8 Settings-Integration & Info-Seite — Spec §1 + §5 (Konfiguration)
 - [x] Toggle "Automatisch nach Updates suchen" im System-Tab
