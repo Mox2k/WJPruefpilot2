@@ -694,9 +694,12 @@ class MainWindow(QMainWindow):
                 x_screen = ctypes.c_short(msg.lParam & 0xFFFF).value
                 y_screen = ctypes.c_short((msg.lParam >> 16) & 0xFFFF).value
 
+                # Screen-Koordinaten sind physisch, Qt-Geometrie ist logisch
+                # -> physische Koordinaten in logische umrechnen
+                dpr = self.devicePixelRatio()
                 geo = self.frameGeometry()
-                x = x_screen - geo.left()
-                y = y_screen - geo.top()
+                x = x_screen / dpr - geo.left()
+                y = y_screen / dpr - geo.top()
                 w = geo.width()
                 h = geo.height()
                 r = self._resize_rand

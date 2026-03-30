@@ -31,6 +31,7 @@ jobs:
           pyinstaller --name=WJPruefpilot --windowed --onefile ^
             --icon=assets/icons/wjpruefpilot.ico ^
             --additional-hooks-dir=. ^
+            --collect-all reportlab.graphics.barcode ^
             --add-data "templates;templates" ^
             --add-data "assets;assets" ^
             main.py
