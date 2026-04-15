@@ -542,7 +542,7 @@ class DetailVDESeite(DetailBasis):
             c_layout.addWidget(self._form_label(label, tooltip=messwert_tooltips.get(key)))
             feld = self._erstelle_validiertes_feld(
                 f"mw_{key}", standard="",
-                validator=self._validiere_dezimal_optional,
+                validator=self._validiere_messwert,
                 einheit=einheit if einheit else None
             )
             mess_zeile = QHBoxLayout()
@@ -745,6 +745,23 @@ class DetailVDESeite(DetailBasis):
         text = text.strip().replace(",", ".")
         if not text:
             return None  # Leeres Feld ist OK
+        try:
+            float(text)
+            return None
+        except ValueError:
+            return "Ungültige Zahl"
+
+    def _validiere_messwert(self, text):
+        """Validiert einen VDE-Messwert: Dezimalzahl, optional mit fuehrendem < oder >."""
+        text = text.strip()
+        if not text:
+            return None  # Leeres Feld ist OK
+        # Optional fuehrendes < oder > entfernen
+        if text[0] in ('<', '>'):
+            text = text[1:].strip()
+        text = text.replace(",", ".")
+        if not text:
+            return "Ungültige Zahl"
         try:
             float(text)
             return None

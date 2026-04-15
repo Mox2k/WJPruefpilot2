@@ -316,25 +316,25 @@ class Settings:
     # --- VDE Messwerte-Standardwerte ---
 
     def get_standard_rpe(self):
-        return self.get_setting('SYSTEM', 'rpe', '0,3')
+        return self.get_setting('SYSTEM', 'rpe', '< 0,3')
 
     def set_standard_rpe(self, wert):
         self.set_setting('SYSTEM', 'rpe', wert)
 
     def get_standard_riso(self):
-        return self.get_setting('SYSTEM', 'riso', '1,0')
+        return self.get_setting('SYSTEM', 'riso', '> 1,0')
 
     def set_standard_riso(self, wert):
         self.set_setting('SYSTEM', 'riso', wert)
 
     def get_standard_ipe(self):
-        return self.get_setting('SYSTEM', 'ipe', '0,5')
+        return self.get_setting('SYSTEM', 'ipe', '< 0,5')
 
     def set_standard_ipe(self, wert):
         self.set_setting('SYSTEM', 'ipe', wert)
 
     def get_standard_ib(self):
-        return self.get_setting('SYSTEM', 'ib', '0,5')
+        return self.get_setting('SYSTEM', 'ib', '< 0,5')
 
     def set_standard_ib(self, wert):
         self.set_setting('SYSTEM', 'ib', wert)

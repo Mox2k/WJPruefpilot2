@@ -120,20 +120,27 @@ class PDFGeneratorVDE(PDFGeneratorBase):
             if grenzwerte.get(key) == '-' or value == '-':
                 return '-'
             grenz = float(grenzwerte[key].split()[1])
-            val = float(value)
+            # Techniker kann ein fuehrendes '<'/'>' eingegeben haben — fuer den
+            # Vergleich entfernen, nur die Zahl interessiert.
+            nur_zahl = value.lstrip('<>').strip()
+            try:
+                val = float(nur_zahl)
+            except ValueError:
+                return '-'
             if key in ['rpe', 'ipe', 'ib']:
                 return haken if val <= grenz else kreuz
             else:  # für 'riso'
                 return haken if val >= grenz else kreuz
 
-        # Erstellung der neuen Variablen für Messgrößen und Prüfergebnis
+        # Erstellung der neuen Variablen für Messgrößen und Prüfergebnis.
+        # Der Techniker gibt das '<'/'>'-Symbol selbst ein — hier wird nichts
+        # mehr automatisch vorangestellt, der Wert wird uebernommen wie er ist.
         messgroessen = {}
         pruefergebnis = {}
         for key, unit in [('rpe', 'Ohm'), ('riso', 'MOhm'), ('ipe', 'mA'), ('ib', 'mA')]:
             value = self.data_to_append['vde_data'].get(key, '-')
             if value != '-':
-                prefix = '< ' if key in ['rpe', 'ipe', 'ib'] else '> '
-                messgroessen[key] = f"{prefix}{value} {unit}"
+                messgroessen[key] = f"{value} {unit}"
                 pruefergebnis[key] = check_value(key, value)
             else:
                 messgroessen[key] = '-'
