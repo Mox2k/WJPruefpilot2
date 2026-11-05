@@ -4,9 +4,13 @@
 Windows-Desktop-App (Python 3.13, PySide6, PyInstaller-EXE) für Waagen-Jöhnk KG; verarbeitet Kunden- und Gerätedaten aus SimplyCal, Firmendaten, Unterschrift und Stempel; Auto-Updater lädt Releases über die GitHub-API. Repo `Mox2k/WJPruefpilot2` ist öffentlich.
 
 ## Befehle
-`docs/projekt-roadmap.md` Abschnitt 2, Tabelle „Befehle“ (Start, Build). Python immer über `C:/Users/Locha/AppData/Local/Programs/Python/Python313/python.exe` (hat PySide6), nicht über das `venv/` im Projekt.
+`docs/projekt.md`, Tabelle „Befehle“ (Start, Build). Python immer über `C:/Users/Locha/AppData/Local/Programs/Python/Python313/python.exe` (hat PySide6), nicht über das `venv/` im Projekt.
 
 Tests: Es gibt keine automatische Testsuite; der User testet von Hand mit einer Beispiel-SimplyCal-DB in einem Testordner. Bis eine Suite aufgebaut ist, gilt als Prüfung: App startet ohne Fehler, betroffene Logik per kurzem Python-Aufruf geprüft und – wo eine Beispiel-DB erreichbar ist – ein Protokoll-PDF erzeugt. Was sich so nicht prüfen lässt, im Bericht als „ohne automatische Verifikation“ melden.
+
+## Zentrale
+URL: https://claude.ai/artifact/CV8y2B22yoxytJTEypy3Cy
+Projekt: wjp
 
 ## Rechenlast
 direkt

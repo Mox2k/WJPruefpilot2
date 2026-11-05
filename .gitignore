@@ -32,8 +32,8 @@ WJ-Icon.png
 
 # Specs und Plaene (intern/vertraulich)
 docs/specs/
-docs/superpowers/specs/
-docs/superpowers/plans/
+docs/plans/
+docs/archive/
 
 # Claude Code
 .claude/settings.local.json

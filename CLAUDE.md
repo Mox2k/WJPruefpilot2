@@ -4,10 +4,12 @@
 
 *WJPruefpilot* – Windows-Desktop-App (Python, PySide6) für Waagen-Jöhnk KG: erstellt Temperaturkalibrierungs- und VDE-Prüfprotokolle als PDF und liest Gerätedaten read-only aus der SimplyCal-SQLite-Datenbank; Zielgruppe sind Techniker im Außendienst. Wo was liegt:
 
-- `docs/projekt-roadmap.md` – Projektstruktur, Befehle (Start, Build), Architektur, Ziele, Status aller Vorhaben. Einzige Doku-Datei; ihr Abschnitt 0 regelt, wer was hineinschreibt.
+- `docs/projekt.md` – Projekt, Projektstruktur, Architektur und Befehle (Start, Build; mit Spalte, was in der Cloud läuft).
+- Projektzentrale – Vorhaben, Status, Meilensteine, Abnahme. Link und Projekt-Kennung im Profil, Abschnitt „Zentrale“; gelesen und geschrieben über den Skill `zentrale`.
+- `docs/specs/`, `docs/plans/`, `docs/archive/done/` – Specs, Pläne, Erledigtes (intern, per `.gitignore` nicht im öffentlichen Repo); Lauf-Log `docs/implement-log.md`.
 - `.claude/workflow-profil.md` – was in diesem Projekt für den Workflow gilt: Prüfbefehle, Projektregeln für Code, Abnahme-Referenzen, Security, Rückfragen.
 - `docs/design-guide.md` – UI-Design (Raster, Spacing, Typografie, Komponenten, Style- und Icon-Regeln); dort autoritativ.
-- `docs/features.md` – Feature-Sammlung aus dem Brainstorming. `docs/specs/` – interne Specs (nicht im öffentlichen Repo, per `.gitignore` ausgeschlossen).
+- `docs/features.md` – Feature-Sammlung aus dem Brainstorming (offene Punkte als Vorhaben in der Zentrale) und abgelehnte Features.
 - `templates/` – HTML-Vorlagen der PDF-Protokolle. `.github/workflows/build.yml` – Release-Build bei Tag `v*`.
 
 ## Arbeitsweise
