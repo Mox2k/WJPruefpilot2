@@ -30,8 +30,10 @@ WJ-Icon.png
 # PyInstaller
 *.exe
 
-# Specs (intern/vertraulich)
+# Specs und Plaene (intern/vertraulich)
 docs/specs/
+docs/superpowers/specs/
+docs/superpowers/plans/
 
 # Claude Code
 .claude/settings.local.json

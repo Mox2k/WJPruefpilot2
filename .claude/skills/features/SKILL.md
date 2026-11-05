@@ -9,7 +9,7 @@ Bevor du mit dem Benutzer interagierst, baue dir ein vollstaendiges Bild des Pro
 
 1. **Projektdokumentation lesen** -- Suche und lies folgende Dateien falls sie existieren:
    - `CLAUDE.md` (Projektbeschreibung, Architektur, Konventionen)
-   - `docs/prime.md` (Projektstand, Fortschritt)
+   - `docs/projekt-roadmap.md` (Projektstand, Fortschritt)
    - `docs/features.md` (bestehende Feature-Liste und abgelehnte Features)
    - `README.md`, `CONTRIBUTING.md` oder aehnliche Dokumentation
 

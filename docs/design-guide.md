@@ -124,22 +124,22 @@ Einheitliche Input-Hoehe: **36px** (alle Inputs, Dropdowns, Settings-Felder)
 
 ## 4. Border-Radius
 
-Drei Stufen fuer konsistente Rundungen:
+Fuenf Werte sind im Einsatz (Quelle: `ui/styles.py` + `main_window.paintEvent`):
 
-| Stufe       | Radius | Verwendung                                      |
-|-------------|--------|--------------------------------------------------|
-| Klein       | 4px    | Infobox-Close, kleine Akzente                    |
-| Standard    | 6px    | Buttons, Inputs, Dropdowns, Tooltips, Sidebar    |
-| Gross       | 8px    | Dropdown-Popup, Infobox, Theme-Option            |
-| Container   | 14px   | Content-Bereich, Detail-Seite, Settings, Dialog  |
-| Fenster     | 10px   | Aeusseres Fenster, Title Bar                     |
+| Stufe       | Radius | Verwendung                                                                 |
+|-------------|--------|----------------------------------------------------------------------------|
+| Mikro       | 4px    | Checkbox-Indikator, Infobox-Close, Progressbar + Chunk                     |
+| Standard    | 6px    | Alle interaktiven Elemente (Buttons, Inputs, Dropdowns, Tooltips, Scrollbar-Handle, Sidebar-/Tab-Buttons) |
+| Gross       | 8px    | Aeusseres Fenster, Title Bar, Sidebar-/Content-Ecken, Dropdown-Popup, Infobox, Theme-Option, Radio-Indikator |
+| Pille       | 12px   | Stepper-Punkt (24x24 -> vollstaendig rund)                                 |
+| Container   | 14px   | Content-Stack, Detail-Seite, Dialog-Box, Settings-Overlay + Tab-Panel      |
 
 ### Regeln
 
 - **Interaktive Elemente** (Buttons, Inputs): immer 6px
 - **Container** (Panels, Overlays): immer 14px
-- **Fenster-Ecken**: 10px (via QPainterPath Mask)
-- Scrollbar-Handle: 3px (schmal, dezent)
+- **Fenster-Ecken**: 8px (via `QPainter.drawRoundedRect` in `paintEvent`, 0px im maximierten Zustand)
+- Kreisrunde Elemente (Stepper-Punkt): Radius = halbe Kantenlaenge
 
 ---
 
@@ -213,17 +213,24 @@ Drei Stufen fuer konsistente Rundungen:
 
 ### Icon-Groessen
 
-| Kontext         | Groesse | Verwendung                    |
-|-----------------|---------|-------------------------------|
-| Title-Bar       | 16x16px | Window Controls, Toggle       |
-| Sidebar         | 22x22px | Navigations-Icons             |
-| Settings Tab    | 18x18px | Reiter-Icons                  |
-| Tabelle Status  | 20x20px | Temp/VDE Status-Icons         |
-| PDF-Button      | 18x18px | Printer-Icon im Button        |
-| PDF-Feedback    | 24x24px | Gruenes Check-Icon            |
-| Dialog          | 24x24px | Typ-Icon (Warnung/Fehler/etc) |
-| Info-Tooltip    | 14x14px | Info-Icon neben Labels        |
-| Infobox         | 18x18px | Info-Icon links               |
+Sieben Werte im Einsatz (Quelle: `setIconSize()` / `icon.pixmap()` im Code):
+
+| Kontext                   | Groesse | Verwendung                                      |
+|---------------------------|---------|-------------------------------------------------|
+| Tabelle Sortier-Indikator | 12x12px | Pfeil neben Spaltenkopf                         |
+| Info-Tooltip              | 14x14px | Info-Icon neben Formular-Labels                 |
+| Title-Bar                 | 16x16px | Window Controls, Toggle, Theme-Switch           |
+| Settings Tab              | 18x18px | Reiter-Icons im Settings-Overlay                |
+| Infobox                   | 18x18px | Info-Icon links in der Infobox                  |
+| Wizard-Navigation         | 18x18px | Zurueck-/Weiter-Buttons im VDE-Wizard           |
+| Tabelle Status            | 20x20px | Temp/VDE Status-Icons in der Waagentabelle      |
+| VDE Sichtpruefung         | 20x20px | Toggle-Icons pro Pruefpunkt                     |
+| Sidebar                   | 22x22px | Navigations-Icons                               |
+| PDF-Button                | 22x22px | Printer-Icon im primaeren PDF-Button (Temp/VDE) |
+| VDE Messwert-Buttons      | 22x22px | Bemerkungs-Toggle pro Messwert                  |
+| Settings Upload-Button    | 22x22px | Bild-Upload-Icons (Logo, Stempel, Unterschrift) |
+| PDF-Feedback              | 24x24px | Gruenes Check-Icon neben PDF-Button             |
+| Dialog                    | 24x24px | Typ-Icon (Warnung/Fehler/Info) in OverlayDialog |
 
 ### Farb-Regeln fuer Icons
 
@@ -234,12 +241,28 @@ Drei Stufen fuer konsistente Rundungen:
 - **Info-Icons**: `info` (blau)
 - **Buttons (weiss)**: immer `#ffffff` auf Akzent-Hintergrund
 
+### Icon-Regeln (verbindlich)
+
+1. **Nur Remix Icon (`ri.*`) verwenden.**
+   Keine anderen qtawesome-Prefixes wie `mdi6.*`, `fa5.*` etc. Icon-Referenz: https://remixicon.com/
+
+2. **Outline als Standard, Filled nur fuer aktiv/erledigt.**
+   Standard-Icons verwenden die `-line`-Variante. Die `-fill`-Variante ist
+   reserviert fuer aktive oder abgeschlossene Zustaende (z.B. aktiver
+   Sidebar-Button, erledigter Wizard-Schritt).
+   ```python
+   # Standard (inaktiv):
+   qta.icon("ri.settings-line", color=farbe)
+   # Aktiver Zustand:
+   qta.icon("ri.settings-fill", color=farbe_aktiv)
+   ```
+
 ---
 
 ## 10. Fenster-Struktur
 
 ```
-┌─────────────────────────────────────────────────┐ ← 10px Radius
+┌─────────────────────────────────────────────────┐ ← 8px Radius
 │  Title Bar (38px)  [Toggle]    [☀][─][□][✕]     │
 ├──────┬──────────────────────────────────────────┤
 │      │                                    ┌────┐│
@@ -257,14 +280,52 @@ Drei Stufen fuer konsistente Rundungen:
 
 ---
 
+## 11. Style-Konventionen (verbindlich)
+
+Regeln fuer den Umgang mit Stylesheets im Code. Der Design-Guide ist die
+autoritative Quelle fuer diese Konventionen.
+
+1. **Alle Styles gehoeren in `ui/styles.py`.**
+   In UI-Dateien wird **kein** `setStyleSheet()` aufgerufen. Jegliches Styling
+   wird zentral in `styles.py` definiert. Das sorgt fuer Konsistenz und macht
+   Theme-Wechsel (Dark/Light) zuverlaessig moeglich.
+
+2. **Dynamische Zustaende ueber Qt Properties loesen.**
+   Zustandsabhaengiges Styling (aktiv, inaktiv, Fehler, etc.) wird ueber Qt
+   Properties und `[eigenschaft="wert"]`-Selektoren in `styles.py` gesteuert.
+   Der UI-Code setzt nur die Property und triggert ein Re-Polish:
+   ```python
+   # In styles.py -- Selektor definieren:
+   QWidget#stepperPunkt[zustand="aktiv"] { background: #3B82F6; }
+
+   # In der UI-Datei -- Property setzen:
+   widget.setProperty("zustand", "aktiv")
+   widget.style().unpolish(widget)
+   widget.style().polish(widget)
+   ```
+
+3. **Farb-Dicts nur fuer Nicht-Stylesheet-Zwecke.**
+   `FARBEN_DARK` und `FARBEN_LIGHT` duerfen in UI-Dateien importiert werden,
+   aber ausschliesslich fuer Dinge wie Icon-Einfaerbung
+   (`qta.icon(..., color=farbe)`), QPainter-Operationen oder
+   QColor-Konstruktoren. **Niemals** fuer `setStyleSheet()`-Aufrufe -- dafuer
+   gibt es die zentralen Stylesheets.
+
+4. **Neue Widgets brauchen einen ObjectName und passende Styles.**
+   Jedes neue Widget bekommt einen `setObjectName("meinWidget")`-Aufruf und
+   einen entsprechenden Style-Block in `styles.py`. Ohne ObjectName greift
+   kein Selektor zuverlaessig.
+
+---
+
 ## Zusammenfassung: Goldene Regeln
 
 1. **8px-Grid**: Alle Abstaende in Vielfachen von 4px/8px
-2. **3 Radien**: 6px (Elemente), 14px (Container), 10px (Fenster)
+2. **5 Radien**: 4px (Mikro), 6px (Elemente), 8px (Fenster/Gross), 12px (Pille), 14px (Container)
 3. **Einheitliches Padding**: 8/12px fuer Inputs, 8/20px fuer Buttons
 4. **Einheitliche Input-Hoehe**: 36px fuer alle Inputs und Dropdowns
 5. **Touch-Target**: Mindestens 36px Hoehe fuer klickbare Elemente
 6. **Animationen**: 150ms (Overlays), 200ms (Seitenwechsel), OutCubic
 7. **Typografie**: 6 Stufen (22/20/16/14/13/12/11px)
-8. **Icons**: 4 Groessen (14/16/18-20/22-24px je nach Kontext)
+8. **Icons**: 7 Groessen (12/14/16/18/20/22/24px je nach Kontext)
 9. **Kompaktes Spacing**: 16px in Settings/Auftraege, 20px in Detail-Formularen
