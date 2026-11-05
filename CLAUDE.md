@@ -24,7 +24,7 @@
 
 ## Workflow
 
-Die Workflow-Skills (`/prime`, `/brainstorm`, `/orchestrate`, `/implement`, `/browser-test`, `/debugging`, `/security-check`, `/shutdown`, `/workflow-aktualisieren`) sind Konto-Skills der Claude-App – so hat sie jede Session und jeder Thread, lokal und in der Cloud. Gepflegt werden sie im Repo `Mox2k/claude-workflow`; geändert wird dort, dann neu in die App hochgeladen.
+Die Workflow-Skills (`/prime`, `/brainstorm`, `/orchestrate`, `/implement`, `/browser-test`, `/debugging`, `/security-check`, `/shutdown`, `/projekt-setup`) sind Konto-Skills der Claude-App – so hat sie jede Session und jeder Thread, lokal und in der Cloud. Gepflegt werden sie im Repo `Mox2k/claude-workflow`; geändert wird dort, dann neu in die App hochgeladen.
 
 - Was nur für dieses Projekt gilt, gehört ins Profil, nicht in den Workflow.
 - Projekt-eigene Skills (`features`, `qt-*`) liegen versioniert in `.claude/skills/` dieses Repos. Lokale Sessions laden sie selbst; **in einem Cloud-Thread fehlen sie** – dort bei Bedarf `.claude/skills/<name>/SKILL.md` lesen und befolgen.
